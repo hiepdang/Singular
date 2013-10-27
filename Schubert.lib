@@ -2,7 +2,7 @@
 version="$Id$";
 category="Algebraic Geometry";
 info="
-LIBRARY:    Schubert.lib    Proceduces for Intersection Theory
+LIBRARY:    schubert.lib    Proceduces for Intersection Theory
 
 AUTHOR:     Hiep Dang,          email: hiep@mathematik.uni-kl.de
             Janko Boehm,        email: boehm@mathematik.uni-kl.de
@@ -22,8 +22,8 @@ OVERVIEW:
     Gromov-Witten invariants. In particular, we implement new tools for the
     computation in equivariant intersection theory. These tools are based on the
     localization of moduli spaces of stable maps and Bott's formula. They are
-    useful for the computation of Gromov-Witten invariants. In order to do this,
-    we have to deal with moduli spaces of stable maps, which were introduced by
+    useful for the computation of Gromov-Witten invariants. For this, we have to
+    deal with moduli spaces of stable maps, which were introduced by
     Kontsevich, and the graphs corresponding to the fixed point components of a
     torus action on the moduli spaces of stable maps.
 
@@ -97,8 +97,8 @@ PROCEDURES:
                                         Grassmannian
     dualPartition(list)                 compute the dual of a partition
 
-KEYWORDS:       Intersection Theory; Enumerative Geometry; Schubert Calculus;
-                Bott's formula.
+KEYWORDS:       Intersection theory; Enumerative geometry; Schubert calculus;
+                Bott's formula; Gromov-Witten invariants.
 
 ";
 
@@ -230,7 +230,6 @@ EXAMPLE:    example fixedPoints; shows an example
         {
             if (i <> j)
             {
-                //l = insert(l,list(graph1(d,i,j),2*d),size(l));
                 l[size(l)+1] = list(graph1(d,i,j),2*d);
             }
         }
@@ -245,7 +244,6 @@ EXAMPLE:    example fixedPoints; shows an example
                 {
                     if (i <> j and j <> k)
                     {
-                        //l = insert(l,list(graph2(list(1,1),i,j,k),2),size(l));
                         l[size(l)+1] = list(graph2(list(1,1),i,j,k),2);
                     }
                 }
@@ -262,18 +260,15 @@ EXAMPLE:    example fixedPoints; shows an example
                 {
                     if (i <> j and j <> k)
                     {
-                        //l = insert(l,list(graph2(list(2,1),i,j,k),2),size(l));
                         l[size(l)+1] = list(graph2(list(2,1),i,j,k),2);
                         for (h=0;h<=r;h++)
                         {
                             if (h <> k)
                             {
-                                //l = insert(l,list(graph31(list(1,1,1),i,j,k,h),2),size(l));
                                 l[size(l)+1] = list(graph31(list(1,1,1),i,j,k,h),2);
                             }
                             if (h <> j)
                             {
-                                //l = insert(l,list(graph32(list(1,1,1),i,j,k,h),6),size(l));
                                 l[size(l)+1] = list(graph32(list(1,1,1),i,j,k,h),6);
                             }
                         }
@@ -292,39 +287,31 @@ EXAMPLE:    example fixedPoints; shows an example
                 {
                     if (i <> j and j <> k)
                     {
-                        //l = insert(l,list(graph2(list(3,1),i,j,k),3),size(l));
                         l[size(l)+1] = list(graph2(list(3,1),i,j,k),3);
                         l[size(l)+1] = list(graph2(list(2,2),i,j,k),8);
-                        //l = insert(l,list(graph2(list(2,2),i,j,k),8),size(l));
                         for (h=0;h<=r;h++)
                         {
                             if (h <> k)
                             {
-                                //l = insert(l,list(graph31(list(2,1,1),i,j,k,h),2),size(l));
-                                //l = insert(l,list(graph31(list(1,2,1),i,j,k,h),4),size(l));
                                 l[size(l)+1] = list(graph31(list(2,1,1),i,j,k,h),2);
                                 l[size(l)+1] = list(graph31(list(1,2,1),i,j,k,h),4);
                             }
                             if (h <> j)
                             {
-                                //l = insert(l,list(graph32(list(2,1,1),i,j,k,h),4),size(l));
                                 l[size(l)+1] = list(graph32(list(2,1,1),i,j,k,h),4);
                             }
                             for (m=0;m<=r;m++)
                             {
                                 if (k <> h and m <> h)
                                 {
-                                    //l = insert(l,list(graph41(list(1,1,1,1),i,j,k,h,m),2),size(l));
                                     l[size(l)+1] = list(graph41(list(1,1,1,1),i,j,k,h,m),2);
                                 }
                                 if (k <> h and m <> k)
                                 {
-                                    //l = insert(l,list(graph42(list(1,1,1,1),i,j,k,h,m),2),size(l));
                                     l[size(l)+1] = list(graph42(list(1,1,1,1),i,j,k,h,m),2);
                                 }
                                 if (h <> j and m <> j)
                                 {
-                                    //l = insert(l,list(graph43(list(1,1,1,1),i,j,k,h,m),24),size(l));
                                     l[size(l)+1] = list(graph43(list(1,1,1,1),i,j,k,h,m),24);
                                 }
                             }
@@ -344,83 +331,63 @@ EXAMPLE:    example fixedPoints; shows an example
                 {
                     if (i <> j and j <> k)
                     {
-                        //l = insert(l,list(graph2(list(4,1),i,j,k),4),size(l));
                         l[size(l)+1] = list(graph2(list(4,1),i,j,k),4);
-                        //l = insert(l,list(graph2(list(3,2),i,j,k),6),size(l));
                         l[size(l)+1] = list(graph2(list(3,2),i,j,k),6);
                         for (h=0;h<=r;h++)
                         {
                             if (k <> h)
                             {
-                                //l = insert(l,list(graph31(list(3,1,1),i,j,k,h),3),size(l));
                                 l[size(l)+1] = list(graph31(list(3,1,1),i,j,k,h),3);
-                                //l = insert(l,list(graph31(list(1,3,1),i,j,k,h),6),size(l));
                                 l[size(l)+1] = list(graph31(list(1,3,1),i,j,k,h),6);
-                                //l = insert(l,list(graph31(list(2,2,1),i,j,k,h),4),size(l));
                                 l[size(l)+1] = list(graph31(list(2,2,1),i,j,k,h),4);
-                                //l = insert(l,list(graph31(list(2,1,2),i,j,k,h),8),size(l));
                                 l[size(l)+1] = list(graph31(list(2,1,2),i,j,k,h),8);
                             }
                             if (j <> h)
                             {
-                                //l = insert(l,list(graph32(list(3,1,1),i,j,k,h),6),size(l));
                                 l[size(l)+1] = list(graph32(list(3,1,1),i,j,k,h),6);
-                                //l = insert(l,list(graph32(list(2,2,1),i,j,k,h),8),size(l));
                                 l[size(l)+1] = list(graph32(list(2,2,1),i,j,k,h),8);
                             }
                             for (m=0;m<=r;m++)
                             {
                                 if (k <> h and h <> m)
                                 {
-                                    //l = insert(l,list(graph41(list(2,1,1,1),i,j,k,h,m),2),size(l));
                                     l[size(l)+1] = list(graph41(list(2,1,1,1),i,j,k,h,m),2);
-                                    //l = insert(l,list(graph41(list(1,2,1,1),i,j,k,h,m),2),size(l));
                                     l[size(l)+1] = list(graph41(list(1,2,1,1),i,j,k,h,m),2);
                                 }
                                 if (k <> h and k <> m)
                                 {
-                                    //l = insert(l,list(graph42(list(2,1,1,1),i,j,k,h,m),4),size(l));
                                     l[size(l)+1] = list(graph42(list(2,1,1,1),i,j,k,h,m),4);
-                                    //l = insert(l,list(graph42(list(1,2,1,1),i,j,k,h,m),4),size(l));
                                     l[size(l)+1] = list(graph42(list(1,2,1,1),i,j,k,h,m),4);
-                                    //l = insert(l,list(graph42(list(1,1,2,1),i,j,k,h,m),2),size(l));
                                     l[size(l)+1] = list(graph42(list(1,1,2,1),i,j,k,h,m),2);
                                 }
                                 if (j <> h and j <> m)
                                 {
-                                    //l = insert(l,list(graph43(list(2,1,1,1),i,j,k,h,m),12),size(l));
                                     l[size(l)+1] = list(graph43(list(2,1,1,1),i,j,k,h,m),12);
                                 }
                                 for (n=0;n<=r;n++)
                                 {
                                     if (k <> h and h <> m and m <> n)
                                     {
-                                        //l = insert(l,list(graph51(list(1,1,1,1,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph51(list(1,1,1,1,1),i,j,k,h,m,n),2);
                                     }
                                     if (k <> h and h <> m and h <> n)
                                     {
-                                        //l = insert(l,list(graph52(list(1,1,1,1,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph52(list(1,1,1,1,1),i,j,k,h,m,n),2);
                                     }
                                     if (k <> h and k <> m and k <> n)
                                     {
-                                        //l = insert(l,list(graph53(list(1,1,1,1,1),i,j,k,h,m,n),6),size(l));
                                         l[size(l)+1] = list(graph53(list(1,1,1,1,1),i,j,k,h,m,n),6);
                                     }
                                     if (j <> h and h <> m and h <> n)
                                     {
-                                        //l = insert(l,list(graph54(list(1,1,1,1,1),i,j,k,h,m,n),8),size(l));
                                         l[size(l)+1] = list(graph54(list(1,1,1,1,1),i,j,k,h,m,n),8);
                                     }
                                     if (k <> h and k <> m and h <> n)
                                     {
-                                        //l = insert(l,list(graph55(list(1,1,1,1,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph55(list(1,1,1,1,1),i,j,k,h,m,n),2);
                                     }
                                     if (j <> h and j <> m and j <> n)
                                     {
-                                        //l = insert(l,list(graph56(list(1,1,1,1,1),i,j,k,h,m,n),120),size(l));
                                         l[size(l)+1] = list(graph56(list(1,1,1,1,1),i,j,k,h,m,n),120);
                                     }
                                 }
@@ -441,497 +408,133 @@ EXAMPLE:    example fixedPoints; shows an example
                 {
                     if (i <> j and j <> k)
                     {
-                        //l = insert(l,list(graph2(list(5,1),i,j,k),5),size(l));
                         l[size(l)+1] = list(graph2(list(5,1),i,j,k),5);
-                        //l = insert(l,list(graph2(list(4,2),i,j,k),8),size(l));
                         l[size(l)+1] = list(graph2(list(4,2),i,j,k),8);
-                        //l = insert(l,list(graph2(list(3,3),i,j,k),18),size(l));
                         l[size(l)+1] = list(graph2(list(3,3),i,j,k),18);
                         for (h=0;h<=r;h++)
                         {
                             if (k <> h)
                             {
-                                //l = insert(l,list(graph31(list(4,1,1),i,j,k,h),4),size(l));
                                 l[size(l)+1] = list(graph31(list(4,1,1),i,j,k,h),4);
-                                //l = insert(l,list(graph31(list(1,4,1),i,j,k,h),8),size(l));
                                 l[size(l)+1] = list(graph31(list(1,4,1),i,j,k,h),8);
-                                //l = insert(l,list(graph31(list(3,2,1),i,j,k,h),6),size(l));
                                 l[size(l)+1] = list(graph31(list(3,2,1),i,j,k,h),6);
-                                //l = insert(l,list(graph31(list(3,1,2),i,j,k,h),6),size(l));
                                 l[size(l)+1] = list(graph31(list(3,1,2),i,j,k,h),6);
-                                //l = insert(l,list(graph31(list(1,3,2),i,j,k,h),6),size(l));
                                 l[size(l)+1] = list(graph31(list(1,3,2),i,j,k,h),6);
-                                //l = insert(l,list(graph31(list(2,2,2),i,j,k,h),16),size(l));
                                 l[size(l)+1] = list(graph31(list(2,2,2),i,j,k,h),16);
                             }
                             if (j <> h)
                             {
-                                //l = insert(l,list(graph32(list(4,1,1),i,j,k,h),8),size(l));
                                 l[size(l)+1] = list(graph32(list(4,1,1),i,j,k,h),8);
-                                //l = insert(l,list(graph32(list(3,2,1),i,j,k,h),6),size(l));
                                 l[size(l)+1] = list(graph32(list(3,2,1),i,j,k,h),6);
-                                //l = insert(l,list(graph32(list(2,2,2),i,j,k,h),48),size(l));
                                 l[size(l)+1] = list(graph32(list(2,2,2),i,j,k,h),48);
                             }
                             for (m=0;m<=r;m++)
                             {
                                 if (k <> h and h <> m)
                                 {
-                                    //l = insert(l,list(graph41(list(3,1,1,1),i,j,k,h,m),3),size(l));
                                     l[size(l)+1] = list(graph41(list(3,1,1,1),i,j,k,h,m),3);
-                                    //l = insert(l,list(graph41(list(1,3,1,1),i,j,k,h,m),3),size(l));
                                     l[size(l)+1] = list(graph41(list(1,3,1,1),i,j,k,h,m),3);
-                                    //l = insert(l,list(graph41(list(2,2,1,1),i,j,k,h,m),4),size(l));
                                     l[size(l)+1] = list(graph41(list(2,2,1,1),i,j,k,h,m),4);
-                                    //l = insert(l,list(graph41(list(2,1,2,1),i,j,k,h,m),4),size(l));
                                     l[size(l)+1] = list(graph41(list(2,1,2,1),i,j,k,h,m),4);
-                                    //l = insert(l,list(graph41(list(2,1,1,2),i,j,k,h,m),8),size(l));
                                     l[size(l)+1] = list(graph41(list(2,1,1,2),i,j,k,h,m),8);
-                                    //l = insert(l,list(graph41(list(1,2,2,1),i,j,k,h,m),8),size(l));
                                     l[size(l)+1] = list(graph41(list(1,2,2,1),i,j,k,h,m),8);
                                 }
                                 if (k <> h and k <> m)
                                 {
-                                    //l = insert(l,list(graph42(list(3,1,1,1),i,j,k,h,m),6),size(l));
                                     l[size(l)+1] = list(graph42(list(3,1,1,1),i,j,k,h,m),6);
-                                    //l = insert(l,list(graph42(list(1,3,1,1),i,j,k,h,m),6),size(l));
                                     l[size(l)+1] = list(graph42(list(1,3,1,1),i,j,k,h,m),6);
-                                    //l = insert(l,list(graph42(list(1,1,3,1),i,j,k,h,m),3),size(l));
                                     l[size(l)+1] = list(graph42(list(1,1,3,1),i,j,k,h,m),3);
-                                    //l = insert(l,list(graph42(list(2,2,1,1),i,j,k,h,m),8),size(l));
                                     l[size(l)+1] = list(graph42(list(2,2,1,1),i,j,k,h,m),8);
-                                    //l = insert(l,list(graph42(list(1,1,2,2),i,j,k,h,m),8),size(l));
                                     l[size(l)+1] = list(graph42(list(1,1,2,2),i,j,k,h,m),8);
-                                    //l = insert(l,list(graph42(list(2,1,2,1),i,j,k,h,m),4),size(l));
                                     l[size(l)+1] = list(graph42(list(2,1,2,1),i,j,k,h,m),4);
-                                    //l = insert(l,list(graph42(list(1,2,2,1),i,j,k,h,m),4),size(l));
                                     l[size(l)+1] = list(graph42(list(1,2,2,1),i,j,k,h,m),4);
                                 }
                                 if (j <> h and j <> m)
                                 {
-                                    //l = insert(l,list(graph43(list(3,1,1,1),i,j,k,h,m),18),size(l));
                                     l[size(l)+1] = list(graph43(list(3,1,1,1),i,j,k,h,m),18);
-                                    //l = insert(l,list(graph43(list(2,2,1,1),i,j,k,h,m),16),size(l));
                                     l[size(l)+1] = list(graph43(list(2,2,1,1),i,j,k,h,m),16);
                                 }
                                 for (n=0;n<=r;n++)
                                 {
                                     if (k <> h and h <> m and m <> n)
                                     {
-                                        //l = insert(l,list(graph51(list(2,1,1,1,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph51(list(2,1,1,1,1),i,j,k,h,m,n),2);
-                                        //l = insert(l,list(graph51(list(1,2,1,1,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph51(list(1,2,1,1,1),i,j,k,h,m,n),2);
-                                        //l = insert(l,list(graph51(list(1,1,2,1,1),i,j,k,h,m,n),4),size(l));
                                         l[size(l)+1] = list(graph51(list(1,1,2,1,1),i,j,k,h,m,n),4);
                                     }
                                     if (k <> h and h <> m and h <> n)
                                     {
-                                        //l = insert(l,list(graph52(list(2,1,1,1,1),i,j,k,h,m,n),4),size(l));
                                         l[size(l)+1] = list(graph52(list(2,1,1,1,1),i,j,k,h,m,n),4);
-                                        //l = insert(l,list(graph52(list(1,2,1,1,1),i,j,k,h,m,n),4),size(l));
                                         l[size(l)+1] = list(graph52(list(1,2,1,1,1),i,j,k,h,m,n),4);
-                                        //l = insert(l,list(graph52(list(1,1,2,1,1),i,j,k,h,m,n),4),size(l));
                                         l[size(l)+1] = list(graph52(list(1,1,2,1,1),i,j,k,h,m,n),4);
-                                        //l = insert(l,list(graph52(list(1,1,1,2,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph52(list(1,1,1,2,1),i,j,k,h,m,n),2);
                                     }
                                     if (k <> h and k <> m and k <> n)
                                     {
-                                        //l = insert(l,list(graph53(list(2,1,1,1,1),i,j,k,h,m,n),12),size(l));
                                         l[size(l)+1] = list(graph53(list(2,1,1,1,1),i,j,k,h,m,n),12);
-                                        //l = insert(l,list(graph53(list(1,2,1,1,1),i,j,k,h,m,n),12),size(l));
                                         l[size(l)+1] = list(graph53(list(1,2,1,1,1),i,j,k,h,m,n),12);
-                                        //l = insert(l,list(graph53(list(1,1,2,1,1),i,j,k,h,m,n),4),size(l));
                                         l[size(l)+1] = list(graph53(list(1,1,2,1,1),i,j,k,h,m,n),4);
                                     }
                                     if (j <> h and h <> m and h <> n)
                                     {
-                                        //l = insert(l,list(graph54(list(2,1,1,1,1),i,j,k,h,m,n),4),size(l));
                                         l[size(l)+1] = list(graph54(list(2,1,1,1,1),i,j,k,h,m,n),4);
-                                        //l = insert(l,list(graph54(list(1,1,2,1,1),i,j,k,h,m,n),16),size(l));
                                         l[size(l)+1] = list(graph54(list(1,1,2,1,1),i,j,k,h,m,n),16);
                                     }
                                     if (k <> h and k <> m and h <> n)
                                     {
-                                        //l = insert(l,list(graph55(list(2,1,1,1,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph55(list(2,1,1,1,1),i,j,k,h,m,n),2);
-                                        //l = insert(l,list(graph55(list(1,2,1,1,1),i,j,k,h,m,n),2),size(l));
                                         l[size(l)+1] = list(graph55(list(1,2,1,1,1),i,j,k,h,m,n),2);
-                                        //l = insert(l,list(graph55(list(1,1,1,2,1),i,j,k,h,m,n),4),size(l));
                                         l[size(l)+1] = list(graph55(list(1,1,1,2,1),i,j,k,h,m,n),4);
                                     }
                                     if (j <> h and j <> m and j <> n)
                                     {
-                                        //l = insert(l,list(graph56(list(2,1,1,1,1),i,j,k,h,m,n),48),size(l));
                                         l[size(l)+1] = list(graph56(list(2,1,1,1,1),i,j,k,h,m,n),48);
                                     }
                                     for (p=0;p<=r;p++)
                                     {
                                         if (k <> h and h <> m and m <> n and n <> p)
                                         {
-                                            //l = insert(l,list(graph61(list(1,1,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
                                             l[size(l)+1] = list(graph61(list(1,1,1,1,1,1),i,j,k,h,m,n,p),2);
                                         }
                                         if (k <> h and h <> m and m <> n and m <> p)
                                         {
-                                            //l = insert(l,list(graph62(list(1,1,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
                                             l[size(l)+1] = list(graph62(list(1,1,1,1,1,1),i,j,k,h,m,n,p),2);
                                         }
                                         if (k <> h and h <> m and h <> n and n <> p)
                                         {
-                                            //l = insert(l,list(graph63(list(1,1,1,1,1,1),i,j,k,h,m,n,p),1),size(l));
                                             l[size(l)+1] = list(graph63(list(1,1,1,1,1,1),i,j,k,h,m,n,p),1);
                                         }
                                         if (k <> h and h <> m and h <> n and h <> p)
                                         {
-                                            //l = insert(l,list(graph64(list(1,1,1,1,1,1),i,j,k,h,m,n,p),6),size(l));
                                             l[size(l)+1] = list(graph64(list(1,1,1,1,1,1),i,j,k,h,m,n,p),6);
                                         }
                                         if (k <> h and k <> m and k <> n and n <> p)
                                         {
-                                            //l = insert(l,list(graph65(list(1,1,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
                                             l[size(l)+1] = list(graph65(list(1,1,1,1,1,1),i,j,k,h,m,n,p),4);
                                         }
                                         if (k <> h and k <> m and m <> p and h <> n)
                                         {
-                                            //l = insert(l,list(graph66(list(1,1,1,1,1,1),i,j,k,h,m,n,p),6),size(l));
                                             l[size(l)+1] = list(graph66(list(1,1,1,1,1,1),i,j,k,h,m,n,p),6);
                                         }
                                         if (j <> h and h <> m and m <> n and m <> p)
                                         {
-                                            //l = insert(l,list(graph67(list(1,1,1,1,1,1),i,j,k,h,m,n,p),8),size(l));
                                             l[size(l)+1] = list(graph67(list(1,1,1,1,1,1),i,j,k,h,m,n,p),8);
                                         }
                                         if (j <> h and h <> m and h <> n and h <> p)
                                         {
-                                            //l = insert(l,list(graph68(list(1,1,1,1,1,1),i,j,k,h,m,n,p),12),size(l));
                                             l[size(l)+1] = list(graph68(list(1,1,1,1,1,1),i,j,k,h,m,n,p),12);
                                         }
                                         if (j <> h and h <> m and h <> n and n <> p)
                                         {
-                                            //l = insert(l,list(graph69(list(1,1,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
                                             l[size(l)+1] = list(graph69(list(1,1,1,1,1,1),i,j,k,h,m,n,p),2);
                                         }
                                         if (k <> h and k <> m and k <> n and k <> p)
                                         {
-                                            //l = insert(l,list(graph610(list(1,1,1,1,1,1),i,j,k,h,m,n,p),24),size(l));
                                             l[size(l)+1] = list(graph610(list(1,1,1,1,1,1),i,j,k,h,m,n,p),24);
                                         }
                                         if (j <> h and j <> m and j <> n and j <> p)
                                         {
-                                            //l = insert(l,list(graph611(list(1,1,1,1,1,1),i,j,k,h,m,n,p),720),size(l));
                                             l[size(l)+1] = list(graph611(list(1,1,1,1,1,1),i,j,k,h,m,n,p),720);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    if (d == 7)
-    {
-        for (i=0;i<=r;i++)
-        {
-            for (j=0;j<=r;j++)
-            {
-                for (k=0;k<=r;k++)
-                {
-                    if (i <> j and j <> k)
-                    {
-                        l = insert(l,list(graph2(list(6,1),i,j,k),6),size(l));
-                        l = insert(l,list(graph2(list(5,2),i,j,k),10),size(l));
-                        l = insert(l,list(graph2(list(4,3),i,j,k),12),size(l));
-                        for (h=0;h<=r;h++)
-                        {
-                            if (k <> h)
-                            {
-                                l = insert(l,list(graph31(list(5,1,1),i,j,k,h),5),size(l));
-                                l = insert(l,list(graph31(list(1,5,1),i,j,k,h),10),size(l));
-                                l = insert(l,list(graph31(list(4,2,1),i,j,k,h),8),size(l));
-                                l = insert(l,list(graph31(list(4,1,2),i,j,k,h),8),size(l));
-                                l = insert(l,list(graph31(list(1,4,2),i,j,k,h),8),size(l));
-                                l = insert(l,list(graph31(list(3,2,2),i,j,k,h),12),size(l));
-                                l = insert(l,list(graph31(list(2,3,2),i,j,k,h),24),size(l));
-                                l = insert(l,list(graph31(list(3,3,1),i,j,k,h),9),size(l));
-                                l = insert(l,list(graph31(list(3,1,3),i,j,k,h),18),size(l));
-                            }
-                            if (j <> h)
-                            {
-                                l = insert(l,list(graph32(list(5,1,1),i,j,k,h),10),size(l));
-                                l = insert(l,list(graph32(list(4,2,1),i,j,k,h),8),size(l));
-                                l = insert(l,list(graph32(list(3,2,2),i,j,k,h),24),size(l));
-                                l = insert(l,list(graph32(list(3,3,1),i,j,k,h),18),size(l));
-                            }
-                            for (m=0;m<=r;m++)
-                            {
-                                if (k <> h and h <> m)
-                                {
-                                    l = insert(l,list(graph41(list(4,1,1,1),i,j,k,h,m),4),size(l));
-                                    l = insert(l,list(graph41(list(1,4,1,1),i,j,k,h,m),4),size(l));
-                                    l = insert(l,list(graph41(list(3,2,1,1),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph41(list(3,1,2,1),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph41(list(3,1,1,2),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph41(list(1,3,2,1),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph41(list(2,3,1,1),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph41(list(2,1,3,1),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph41(list(2,2,2,1),i,j,k,h,m),8),size(l));
-                                    l = insert(l,list(graph41(list(2,2,1,2),i,j,k,h,m),8),size(l));
-                                }
-                                if (k <> h and k <> m)
-                                {
-                                    l = insert(l,list(graph42(list(4,1,1,1),i,j,k,h,m),8),size(l));
-                                    l = insert(l,list(graph42(list(1,4,1,1),i,j,k,h,m),8),size(l));
-                                    l = insert(l,list(graph42(list(1,1,4,1),i,j,k,h,m),4),size(l));
-                                    l = insert(l,list(graph42(list(3,2,1,1),i,j,k,h,m),12),size(l));
-                                    l = insert(l,list(graph42(list(2,3,1,1),i,j,k,h,m),12),size(l));
-                                    l = insert(l,list(graph42(list(1,2,1,3),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph42(list(2,1,1,3),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph42(list(1,3,1,2),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph42(list(3,1,1,2),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph42(list(1,1,3,2),i,j,k,h,m),6),size(l));
-                                    l = insert(l,list(graph42(list(2,2,2,1),i,j,k,h,m),8),size(l));
-                                    l = insert(l,list(graph42(list(2,1,2,2),i,j,k,h,m),16),size(l));
-                                    l = insert(l,list(graph42(list(1,2,2,2),i,j,k,h,m),16),size(l));
-                                }
-                                if (j <> h and j <> m)
-                                {
-                                    l = insert(l,list(graph43(list(4,1,1,1),i,j,k,h,m),24),size(l));
-                                    l = insert(l,list(graph43(list(3,2,1,1),i,j,k,h,m),12),size(l));
-                                    l = insert(l,list(graph43(list(2,2,2,1),i,j,k,h,m),48),size(l));
-                                }
-                                for (n=0;n<=r;n++)
-                                {
-                                    if (k <> h and h <> m and m <> n)
-                                    {
-                                        l = insert(l,list(graph51(list(3,1,1,1,1),i,j,k,h,m,n),3),size(l));
-                                        l = insert(l,list(graph51(list(1,3,1,1,1),i,j,k,h,m,n),3),size(l));
-                                        l = insert(l,list(graph51(list(1,1,3,1,1),i,j,k,h,m,n),6),size(l));
-                                        l = insert(l,list(graph51(list(2,2,1,1,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph51(list(2,1,2,1,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph51(list(2,1,1,2,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph51(list(2,1,1,1,2),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph51(list(1,2,2,1,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph51(list(1,2,1,2,1),i,j,k,h,m,n),8),size(l));
-                                    }
-                                    if (k <> h and h <> m and h <> n)
-                                    {
-                                        l = insert(l,list(graph52(list(3,1,1,1,1),i,j,k,h,m,n),6),size(l));
-                                        l = insert(l,list(graph52(list(1,3,1,1,1),i,j,k,h,m,n),6),size(l));
-                                        l = insert(l,list(graph52(list(1,1,3,1,1),i,j,k,h,m,n),6),size(l));
-                                        l = insert(l,list(graph52(list(1,1,1,3,1),i,j,k,h,m,n),3),size(l));
-                                        l = insert(l,list(graph52(list(2,2,1,1,1),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph52(list(2,1,2,1,1),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph52(list(2,1,1,2,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph52(list(1,2,2,1,1),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph52(list(1,2,1,2,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph52(list(1,1,2,2,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph52(list(1,1,1,2,2),i,j,k,h,m,n),8),size(l));
-                                    }
-                                    if (k <> h and k <> m and k <> n)
-                                    {
-                                        l = insert(l,list(graph53(list(3,1,1,1,1),i,j,k,h,m,n),18),size(l));
-                                        l = insert(l,list(graph53(list(1,3,1,1,1),i,j,k,h,m,n),18),size(l));
-                                        l = insert(l,list(graph53(list(1,1,3,1,1),i,j,k,h,m,n),6),size(l));
-                                        l = insert(l,list(graph53(list(2,2,1,1,1),i,j,k,h,m,n),24),size(l));
-                                        l = insert(l,list(graph53(list(2,1,2,1,1),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph53(list(1,2,2,1,1),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph53(list(1,1,2,2,1),i,j,k,h,m,n),8),size(l));
-                                    }
-                                    if (j <> h and h <> m and h <> n)
-                                    {
-                                        l = insert(l,list(graph54(list(3,1,1,1,1),i,j,k,h,m,n),6),size(l));
-                                        l = insert(l,list(graph54(list(1,1,3,1,1),i,j,k,h,m,n),24),size(l));
-                                        l = insert(l,list(graph54(list(2,2,1,1,1),i,j,k,h,m,n),16),size(l));
-                                        l = insert(l,list(graph54(list(2,1,2,1,1),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph54(list(2,1,1,2,1),i,j,k,h,m,n),8),size(l));
-                                    }
-                                    if (k <> h and k <> m and h <> n)
-                                    {
-                                        l = insert(l,list(graph55(list(3,1,1,1,1),i,j,k,h,m,n),3),size(l));
-                                        l = insert(l,list(graph55(list(1,3,1,1,1),i,j,k,h,m,n),3),size(l));
-                                        l = insert(l,list(graph55(list(1,1,1,3,1),i,j,k,h,m,n),6),size(l));
-                                        l = insert(l,list(graph55(list(2,2,1,1,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph55(list(2,1,2,1,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph55(list(2,1,1,2,1),i,j,k,h,m,n),4),size(l));
-                                        l = insert(l,list(graph55(list(2,1,1,1,2),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph55(list(1,2,2,1,1),i,j,k,h,m,n),8),size(l));
-                                        l = insert(l,list(graph55(list(1,2,1,2,1),i,j,k,h,m,n),4),size(l));
-                                    }
-                                    if (j <> h and j <> m and j <> n)
-                                    {
-                                        l = insert(l,list(graph56(list(3,1,1,1,1),i,j,k,h,m,n),72),size(l));
-                                        l = insert(l,list(graph56(list(2,2,1,1,1),i,j,k,h,m,n),48),size(l));
-                                    }
-                                    for (p=0;p<=r;p++)
-                                    {
-                                        if (k <> h and h <> m and m <> n and n <> p)
-                                        {
-                                            l = insert(l,list(graph61(list(2,1,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph61(list(1,2,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph61(list(1,1,2,1,1,1),i,j,k,h,m,n,p),2),size(l));
-                                        }
-                                        if (k <> h and h <> m and m <> n and m <> p)
-                                        {
-                                            l = insert(l,list(graph62(list(2,1,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph62(list(1,2,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph62(list(1,1,2,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph62(list(1,1,1,2,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph62(list(1,1,1,1,2,1),i,j,k,h,m,n,p),2),size(l));
-                                        }
-                                        if (k <> h and h <> m and h <> n and n <> p)
-                                        {
-                                            l = insert(l,list(graph63(list(2,1,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph63(list(1,2,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph63(list(1,1,2,1,1,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph63(list(1,1,1,2,1,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph63(list(1,1,1,1,2,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph63(list(1,1,1,1,1,2),i,j,k,h,m,n,p),2),size(l));
-                                        }
-                                        if (k <> h and h <> m and h <> n and h <> p)
-                                        {
-                                            l = insert(l,list(graph64(list(2,1,1,1,1,1),i,j,k,h,m,n,p),12),size(l));
-                                            l = insert(l,list(graph64(list(1,2,1,1,1,1),i,j,k,h,m,n,p),12),size(l));
-                                            l = insert(l,list(graph64(list(1,1,2,1,1,1),i,j,k,h,m,n,p),12),size(l));
-                                            l = insert(l,list(graph64(list(1,1,1,2,1,1),i,j,k,h,m,n,p),4),size(l));
-                                        }
-                                        if (k <> h and k <> m and k <> n and n <> p)
-                                        {
-                                            l = insert(l,list(graph65(list(2,1,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph65(list(1,2,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph65(list(1,1,2,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                        }
-                                        if (k <> h and k <> m and m <> p and h <> n)
-                                        {
-                                            l = insert(l,list(graph66(list(2,1,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph66(list(1,2,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                        }
-                                        if (j <> h and h <> m and m <> n and m <> p)
-                                        {
-                                            l = insert(l,list(graph67(list(2,1,1,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph67(list(1,1,2,1,1,1),i,j,k,h,m,n,p),8),size(l));
-                                        }
-                                        if (j <> h and h <> m and h <> n and h <> p)
-                                        {
-                                            l = insert(l,list(graph68(list(2,1,1,1,1,1),i,j,k,h,m,n,p),12),size(l));
-                                            l = insert(l,list(graph68(list(1,1,2,1,1,1),i,j,k,h,m,n,p),24),size(l));
-                                            l = insert(l,list(graph68(list(1,1,1,2,1,1),i,j,k,h,m,n,p),8),size(l));
-                                        }
-                                        if (j <> h and h <> m and h <> n and n <> p)
-                                        {
-                                            l = insert(l,list(graph69(list(2,1,1,1,1,1),i,j,k,h,m,n,p),2),size(l));
-                                            l = insert(l,list(graph69(list(1,1,2,1,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph69(list(1,1,1,2,1,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph69(list(1,1,1,1,2,1),i,j,k,h,m,n,p),4),size(l));
-                                            l = insert(l,list(graph69(list(1,1,1,1,1,2),i,j,k,h,m,n,p),4),size(l));
-                                        }
-                                        if (k <> h and k <> m and k <> n and k <> p)
-                                        {
-                                            l = insert(l,list(graph610(list(2,1,1,1,1,1),i,j,k,h,m,n,p),48),size(l));
-                                            l = insert(l,list(graph610(list(1,2,1,1,1,1),i,j,k,h,m,n,p),48),size(l));
-                                            l = insert(l,list(graph610(list(1,1,2,1,1,1),i,j,k,h,m,n,p),12),size(l));
-                                        }
-                                        if (j <> h and j <> m and j <> n and j <> p)
-                                        {
-                                            l = insert(l,list(graph611(list(2,1,1,1,1,1),i,j,k,h,m,n,p),240),size(l));
-                                        }
-                                        for (q=0;q<=r;q++)
-                                        {
-                                            if (k <> h and h <> m and m <> n and n <> p and p <> q)
-                                            {
-                                                l = insert(l,list(graph71(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),2),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and n <> p and n <> q)
-                                            {
-                                                l = insert(l,list(graph72(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),2),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and n <> p and m <> q)
-                                            {
-                                                l = insert(l,list(graph73(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),1),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and n <> p and h <> q)
-                                            {
-                                                l = insert(l,list(graph74(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),2),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and m <> p and m <> q)
-                                            {
-                                                l = insert(l,list(graph75(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),6),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and h <> p and h <> q)
-                                            {
-                                                l = insert(l,list(graph76(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),2),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and h <> p and m <> q)
-                                            {
-                                                l = insert(l,list(graph77(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),2),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and k <> p and m <> q)
-                                            {
-                                                l = insert(l,list(graph78(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),2),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and j <> p and m <> q)
-                                            {
-                                                l = insert(l,list(graph79(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),8),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and k <> p and h <> q)
-                                            {
-                                                l = insert(l,list(graph710(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),4),size(l));
-                                            }
-                                            if (k <> h and h <> m and m <> n and h <> p and p <> q)
-                                            {
-                                                l = insert(l,list(graph711(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),2),size(l));
-                                            }
-                                            if (k <> h and h <> m and j <> n and k <> p and h <> q)
-                                            {
-                                                l = insert(l,list(graph712(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),8),size(l));
-                                            }
-                                            if (k <> h and h <> m and h <> n and h <> p and h <> q)
-                                            {
-                                                l = insert(l,list(graph713(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),24),size(l));
-                                            }
-                                            if (k <> h and h <> m and k <> n and h <> p and h <> q)
-                                            {
-                                                l = insert(l,list(graph714(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),6),size(l));
-                                            }
-                                            if (k <> h and h <> m and j <> n and h <> p and h <> q)
-                                            {
-                                                l = insert(l,list(graph715(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),12),size(l));
-                                            }
-                                            if (k <> h and h <> m and k <> n and k <> p and k <> q)
-                                            {
-                                                l = insert(l,list(graph716(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),12),size(l));
-                                            }
-                                            if (k <> h and h <> m and k <> n and k <> p and p <> q)
-                                            {
-                                                l = insert(l,list(graph717(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),6),size(l));
-                                            }
-                                            if (k <> h and h <> m and j <> n and k <> p and p <> q)
-                                            {
-                                                l = insert(l,list(graph718(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),4),size(l));
-                                            }
-                                            if (k <> h and h <> m and h <> n and k <> p and k <> q)
-                                            {
-                                                l = insert(l,list(graph719(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),4),size(l));
-                                            }
-                                            if (k <> h and j <> m and k <> n and k <> p and k <> q)
-                                            {
-                                                l = insert(l,list(graph720(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),48),size(l));
-                                            }
-                                            if (k <> h and k <> m and k <> n and k <> p and k <> q)
-                                            {
-                                                l = insert(l,list(graph721(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),120),size(l));
-                                            }
-                                            if (k <> h and j <> m and j <> n and k <> p and k <> q)
-                                            {
-                                                l = insert(l,list(graph722(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),72),size(l));
-                                            }
-                                            if (j <> h and j <> m and j <> n and j <> p and j <> q)
-                                            {
-                                                l = insert(l,list(graph723(list(1,1,1,1,1,1,1),i,j,k,h,m,n,p,q),5040),size(l));
-                                            }
                                         }
                                     }
                                 }
@@ -1250,8 +853,8 @@ EXAMPLE:    example rationalCurve; shows an example
     def R = basering;
     setring R;
     int n,i,j;
-    if (size(#) == 0) {n = 4; list l = 5;}
-    else {n = size(#)+3; list l = #;}
+    if (size(#) == 0) {n = 4; # = list(5);}
+    else {n = size(#)+3;}
     variety P = projectiveSpace(n);
     stack M = moduliSpace(P,d);
     def F = fixedPoints(M);
@@ -1260,9 +863,9 @@ EXAMPLE:    example rationalCurve; shows an example
     {
         graph G = F[i][1];
         number s = 1;
-        for (j=1;j<=size(l);j++)
+        for (j=1;j<=size(#);j++)
         {
-            s = s*contributionBundle(M,G,list(l[j]));
+            s = s*contributionBundle(M,G,list(#[j]));
         }
         number t = F[i][2]*normalBundle(M,G);
         r = r + s/t;
@@ -1910,696 +1513,6 @@ static proc graph611(list d, int i, int j, int k, int h, int m, int n, int p)
     list v7 = p,1,f12;
     G.vertices = v1,v2,v3,v4,v5,v6,v7;
     G.edges = f1,f3,f5,f7,f9,f11;
-    return (G);
-}
-
-static proc graph71(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = n,p,d[6];
-    list f12 = p,n,d[6];
-    list f13 = p,q,d[7];
-    list f14 = q,p,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,2,f6,f7;
-    list v5 = m,2,f8,f9;
-    list v6 = n,2,f10,f11;
-    list v7 = p,2,f12,f13;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph72(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = n,p,d[6];
-    list f12 = p,n,d[6];
-    list f13 = n,q,d[7];
-    list f14 = q,n,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,2,f6,f7;
-    list v5 = m,2,f8,f9;
-    list v6 = n,3,f10,f11,f13;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph73(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = n,p,d[6];
-    list f12 = p,n,d[6];
-    list f13 = m,q,d[7];
-    list f14 = q,m,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,2,f6,f7;
-    list v5 = m,3,f8,f9,f13;
-    list v6 = n,2,f10,f11;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph74(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = n,p,d[6];
-    list f12 = p,n,d[6];
-    list f13 = h,q,d[7];
-    list f14 = q,h,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,3,f6,f7,f13;
-    list v5 = m,2,f8,f9;
-    list v6 = n,2,f10,f11;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph75(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = m,p,d[6];
-    list f12 = p,m,d[6];
-    list f13 = m,q,d[7];
-    list f14 = q,m,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,2,f6,f7;
-    list v5 = m,4,f8,f9,f11,f13;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph76(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = h,p,d[6];
-    list f12 = p,h,d[6];
-    list f13 = h,q,d[7];
-    list f14 = q,h,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,4,f6,f7,f11,f13;
-    list v5 = m,2,f8,f9;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph77(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = h,p,d[6];
-    list f12 = p,h,d[6];
-    list f13 = m,q,d[7];
-    list f14 = q,m,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,3,f6,f7,f11;
-    list v5 = m,3,f8,f9,f13;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph78(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = m,q,d[7];
-    list f14 = q,m,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,3,f4,f5,f11;
-    list v4 = h,2,f6,f7;
-    list v5 = m,3,f8,f9,f13;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph79(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = j,p,d[6];
-    list f12 = p,j,d[6];
-    list f13 = m,q,d[7];
-    list f14 = q,m,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,3,f2,f3,f11;
-    list v3 = k,2,f4,f5;
-    list v4 = h,2,f6,f7;
-    list v5 = m,3,f8,f9,f13;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph710(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = h,q,d[7];
-    list f14 = q,h,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,3,f4,f5,f11;
-    list v4 = h,3,f6,f7,f13;
-    list v5 = m,2,f8,f9;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph711(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = m,n,d[5];
-    list f10 = n,m,d[5];
-    list f11 = h,p,d[6];
-    list f12 = p,h,d[6];
-    list f13 = p,q,d[7];
-    list f14 = q,p,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,3,f6,f7,f11;
-    list v5 = m,2,f8,f9;
-    list v6 = n,1,f10;
-    list v7 = p,2,f12,f13;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph712(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = j,n,d[5];
-    list f10 = n,j,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = h,q,d[7];
-    list f14 = q,h,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,3,f2,f3,f9;
-    list v3 = k,3,f4,f5,f11;
-    list v4 = h,3,f6,f7,f13;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph713(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = h,n,d[5];
-    list f10 = n,h,d[5];
-    list f11 = h,p,d[6];
-    list f12 = p,h,d[6];
-    list f13 = h,q,d[7];
-    list f14 = q,h,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,2,f4,f5;
-    list v4 = h,5,f6,f7,f9,f11,f13;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph714(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = k,n,d[5];
-    list f10 = n,k,d[5];
-    list f11 = h,p,d[6];
-    list f12 = p,h,d[6];
-    list f13 = h,q,d[7];
-    list f14 = q,h,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,3,f4,f5,f9;
-    list v4 = h,4,f6,f7,f11,f13;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph715(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = j,n,d[5];
-    list f10 = n,j,d[5];
-    list f11 = h,p,d[6];
-    list f12 = p,h,d[6];
-    list f13 = h,q,d[7];
-    list f14 = q,h,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,3,f2,f3,f9;
-    list v3 = k,2,f4,f5;
-    list v4 = h,4,f6,f7,f11,f13;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph716(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = k,n,d[5];
-    list f10 = n,k,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = k,q,d[7];
-    list f14 = q,k,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,5,f4,f5,f9,f11,f13;
-    list v4 = h,2,f6,f7;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph717(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = k,n,d[5];
-    list f10 = n,k,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = p,q,d[7];
-    list f14 = q,p,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,4,f4,f5,f9,f11;
-    list v4 = h,2,f6,f7;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,2,f12,f13;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph718(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = j,n,d[5];
-    list f10 = n,j,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = p,q,d[7];
-    list f14 = q,p,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,3,f2,f3,f9;
-    list v3 = k,3,f4,f5,f11;
-    list v4 = h,2,f6,f7;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,2,f12,f13;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph719(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = h,m,d[4];
-    list f8 = m,h,d[4];
-    list f9 = h,n,d[5];
-    list f10 = n,h,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = k,q,d[7];
-    list f14 = q,k,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,4,f4,f5,f11,f13;
-    list v4 = h,3,f6,f7,f9;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph720(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = j,m,d[4];
-    list f8 = m,j,d[4];
-    list f9 = k,n,d[5];
-    list f10 = n,k,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = k,q,d[7];
-    list f14 = q,k,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,3,f2,f3,f7;
-    list v3 = k,5,f4,f5,f9,f11,f13;
-    list v4 = h,1,f6;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph721(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = k,m,d[4];
-    list f8 = m,k,d[4];
-    list f9 = k,n,d[5];
-    list f10 = n,k,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = k,q,d[7];
-    list f14 = q,k,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,2,f2,f3;
-    list v3 = k,6,f4,f5,f7,f9,f11,f13;
-    list v4 = h,1,f6;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph722(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = k,h,d[3];
-    list f6 = h,k,d[3];
-    list f7 = j,m,d[4];
-    list f8 = m,j,d[4];
-    list f9 = j,n,d[5];
-    list f10 = n,j,d[5];
-    list f11 = k,p,d[6];
-    list f12 = p,k,d[6];
-    list f13 = k,q,d[7];
-    list f14 = q,k,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,4,f2,f3,f7,f9;
-    list v3 = k,4,f4,f5,f11,f13;
-    list v4 = h,1,f6;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
-    return (G);
-}
-
-static proc graph723(list d, int i, int j, int k, int h, int m, int n, int p, int q)
-{
-    graph G;
-    list f1 = i,j,d[1];
-    list f2 = j,i,d[1];
-    list f3 = j,k,d[2];
-    list f4 = k,j,d[2];
-    list f5 = j,h,d[3];
-    list f6 = h,j,d[3];
-    list f7 = j,m,d[4];
-    list f8 = m,j,d[4];
-    list f9 = j,n,d[5];
-    list f10 = n,j,d[5];
-    list f11 = j,p,d[6];
-    list f12 = p,j,d[6];
-    list f13 = j,q,d[7];
-    list f14 = q,j,d[7];
-    list v1 = i,1,f1;
-    list v2 = j,7,f2,f3,f5,f7,f9,f11,f13;
-    list v3 = k,1,f4;
-    list v4 = h,1,f6;
-    list v5 = m,1,f8;
-    list v6 = n,1,f10;
-    list v7 = p,1,f12;
-    list v8 = q,1,f14;
-    G.vertices = v1,v2,v3,v4,v5,v6,v7,v8;
-    G.edges = f1,f3,f5,f7,f9,f11,f13;
     return (G);
 }
 
