@@ -5,27 +5,29 @@ info="
 LIBRARY:    schubert.lib    Proceduces for Intersection Theory
 
 AUTHOR:     Hiep Dang,          email: hiep@mathematik.uni-kl.de
-            Janko Boehm,        email: boehm@mathematik.uni-kl.de
-            Wolfram Decker,     email: decker@mathematik.uni-kl.de
-            Andreas Gathmann,   email: andreas@mathematik.uni-kl.de
 
 OVERVIEW:
 
     We implement new classes (variety, sheaf, stack, graph) and methods for
-    computing with them. Here a variety is represented by a nonnegative integer
-    which is its dimension and a graded ring which is its Chow ring. A sheaf is
-    represented by a variety and a polynomial which is its Chern character.
-    In particular, we implement the concrete varieties such as projective spaces
-    , Grassmannians, and projective bundles.
+    computing with them. An abstract variety is represented by a nonnegative
+    integer which is its dimension and a graded ring which is its Chow ring.
+    An abstract sheaf is represented by a variety and a polynomial which is its
+    Chern character. In particular, we implement the concrete varieties such as
+    projective spaces, Grassmannians, and projective bundles.
 
     An important task of this library is related to the computation of
     Gromov-Witten invariants. In particular, we implement new tools for the
     computation in equivariant intersection theory. These tools are based on the
     localization of moduli spaces of stable maps and Bott's formula. They are
-    useful for the computation of Gromov-Witten invariants. For this, we have to
-    deal with moduli spaces of stable maps, which were introduced by
+    useful for the computation of Gromov-Witten invariants. In order to do this,
+    we have to deal with moduli spaces of stable maps, which were introduced by
     Kontsevich, and the graphs corresponding to the fixed point components of a
     torus action on the moduli spaces of stable maps.
+    
+    As an insightful example, the numbers of rational curves on general complete
+    intersection Calabi-Yau threefolds in projective spaces are computed up to
+    degree 6. The results are all in agreement with predictions made from mirror
+    symmetry computations.
 
 REFERENCES:
 
@@ -85,6 +87,8 @@ PROCEDURES:
     rationalCurve(int,list)             compute the Gromov-Witten invariant
                                         corresponding the number of rational
                                         curves on a general Calabi-Yau threefold
+    sumofquotients(stack,list)          prepare a command for parallel
+                                        computation
     part(poly,int)                      compute a homogeneous component of a
                                         polynomial.
     parts(poly,int,int)                 compute the sum of homogeneous
@@ -106,6 +110,7 @@ KEYWORDS:       Intersection theory; Enumerative geometry; Schubert calculus;
 
 LIB "general.lib";
 LIB "homolog.lib";
+LIB "parallel.lib";
 
 ////////////////////////////////////////////////////////////////////////////////
 /////////// create new objects in this library  ////////////////////////////////
@@ -550,7 +555,7 @@ EXAMPLE:    example fixedPoints; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     variety P = projectiveSpace(4);
     stack M = moduliSpace(P,2);
     def F = fixedPoints(M);
@@ -582,7 +587,7 @@ EXAMPLE:    example torusList; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     variety P = projectiveSpace(4);
     def L = torusList(P);
     L;
@@ -659,7 +664,7 @@ EXAMPLE:    example contributionBundle; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     variety P = projectiveSpace(4);
     stack M = moduliSpace(P,2);
     def F = fixedPoints(M);
@@ -751,7 +756,7 @@ EXAMPLE:    example normalBundle; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     variety P = projectiveSpace(4);
     stack M = moduliSpace(P,2);
     def F = fixedPoints(M);
@@ -790,12 +795,13 @@ EXAMPLE:    example multipleCover; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     multipleCover(1);
     multipleCover(2);
     multipleCover(3);
     multipleCover(4);
     multipleCover(5);
+    multipleCover(6);
 }
 
 proc linesHypersurface(int n)
@@ -828,7 +834,7 @@ EXAMPLE:    example linesHypersurface; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     linesHypersurface(2);
     linesHypersurface(3);
     linesHypersurface(4);
@@ -838,6 +844,42 @@ example
     linesHypersurface(8);
     linesHypersurface(9);
     linesHypersurface(10);
+}
+
+proc sumofquotients(stack M, list F, list #)
+"USAGE:     sumofquotient(M,F,#); M stack, F list, # list
+RETURN:     number
+THEORY:     This is useful for the parallel computation of rationalCurve.
+KEYWORDS:   Gromov-Witten invariants, rational curves on Calabi-Yau threefolds
+EXAMPLE:    example sumofquotients; shows an example
+"
+{
+    if (size(#) == 0) {list l = 5;}
+    else {list l = #;}
+    number sum = 0;
+    number s, t;
+    int i,j;
+    for (i = size(F); i > 0; i--)
+    {
+        s = 1;
+        for (j=1;j<=size(l);j++)
+        {
+            s = s*contributionBundle(M,F[i][1],list(l[j]));
+        }
+        t = F[i][2]*normalBundle(M,F[i][1]);
+        sum = sum + s/t;
+    }
+    return(sum);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,x,dp;
+    variety P = projectiveSpace(4);
+    stack M = moduliSpace(P,2);
+    list F = fixedPoints(M);
+    sumofquotients(M,F);
+    sumofquotients(M,F,list(5));
 }
 
 proc rationalCurve(int d, list #)
@@ -852,36 +894,39 @@ EXAMPLE:    example rationalCurve; shows an example
 {
     def R = basering;
     setring R;
-    int n,i,j;
-    if (size(#) == 0) {n = 4; # = list(5);}
-    else {n = size(#)+3;}
+    int n,i;
+    if (size(#) == 0) {n = 4; list l = 5;}
+    else {n = size(#)+3; list l = #;}
     variety P = projectiveSpace(n);
     stack M = moduliSpace(P,d);
     def F = fixedPoints(M);
-    number r = 0;
-    for (i=1;i<=size(F);i++)
+    int ncpus = system("cpu");
+    int sizeF = size(F);
+    list args;
+    int from = 1;
+    int to;
+    for (i = 1; i <= ncpus; i++)
     {
-        graph G = F[i][1];
-        number s = 1;
-        for (j=1;j<=size(#);j++)
-        {
-            s = s*contributionBundle(M,G,list(#[j]));
-        }
-        number t = F[i][2]*normalBundle(M,G);
-        r = r + s/t;
-        kill s,t,G;
+        to = (sizeF*i) div ncpus;
+        args[i] = list(M, list(F[from..to]), l);
+        from = to+1;
+    }
+    list results = parallelWaitAll("sumofquotients", args);
+    number r = 0;
+    for (i = 1; i <= ncpus; i++)
+    {
+        r = r + results[i];
     }
     return (r);
 }
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     rationalCurve(1);
     rationalCurve(2);
     rationalCurve(3);
     rationalCurve(4);
-    rationalCurve(5);
     rationalCurve(1,list(4,2));
     rationalCurve(1,list(3,3));
     rationalCurve(1,list(3,2,2));
@@ -898,10 +943,6 @@ example
     rationalCurve(4,list(3,3));
     rationalCurve(4,list(3,2,2));
     rationalCurve(4,list(2,2,2,2));
-    rationalCurve(5,list(4,2));
-    rationalCurve(5,list(3,3));
-    rationalCurve(5,list(3,2,2));
-    rationalCurve(5,list(2,2,2,2));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -921,7 +962,7 @@ EXAMPLE:    example printGraph; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring R=(0,x1,x2,x3,x4),(q1,q2,q3,q4,q5,q6),dp;
+    ring r = 0,x,dp;
     graph G = makeGraph(list(list(0,1,list(0,1,2)),list(1,1,list(1,0,2))),
     list(list(0,1,2)));
     G;
@@ -943,7 +984,7 @@ EXAMPLE:    example makeGraph; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring R=(0,x1,x2,x3,x4),(q1,q2,q3,q4,q5,q6),dp;
+    ring r = 0,x,dp;
     graph G = makeGraph(list(list(0,1,list(0,1,2)),list(1,1,list(1,0,2))),
     list(list(0,1,2)));
     G;
@@ -1516,10 +1557,6 @@ static proc graph611(list d, int i, int j, int k, int h, int m, int n, int p)
     return (G);
 }
 
-////////////////////////////////////////////////////////////////////////////////
-/// Auxilary Static Procedures in this Library /////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
 proc part(poly f, int n)
 "USAGE:     part(f,n); f poly, n int
 RETURN:     poly
@@ -1646,7 +1683,7 @@ EXAMPLE:    example expp; shows examples
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0,(x),dp;
+    ring r = 0,x,dp;
     poly f = 3+x;
     expp(f,3);
 }
@@ -1718,7 +1755,7 @@ EXAMPLE:    example printVariety; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0, (h,e), wp(1,1);
+    ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
     variety V = makeVariety(2,rels);
     V;
@@ -1744,7 +1781,7 @@ EXAMPLE:    example makeVariety; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0, (h,e), wp(1,1);
+    ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
     variety V = makeVariety(2,rels);
     V;
@@ -1769,7 +1806,7 @@ EXAMPLE:    example makeVariety; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    ring r = 0, (h,e), wp(1,1);
+    ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
     int d = 2;
     variety V = makeVariety(2,rels);
@@ -2086,7 +2123,7 @@ example
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-////////// Procedures concerned with sheaves ///////////////////////////////////
+////////// Procedures concerned with abstract sheaves ///////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 proc printSheaf(sheaf S)
