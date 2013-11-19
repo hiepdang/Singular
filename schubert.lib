@@ -49,12 +49,21 @@ PROCEDURES:
     printVariety(variety)               print procedure for a variety
     productVariety(variety,variety)     make the product of two varieties
     ChowRing(variety)                   create the Chow ring of a variety
+    basis(variety)                      compute a basis for the Chow ring of
+                                        a variety
+    dualBasis(variety)                  compute a dual basis for the Chow ring
+                                        of a variety
+    intersectionMatrix(variety)         compute the intersection matrix of a
+                                        variety
+    BettiNumber(variety,int)            compute the i-th Betti number of a
+                                        variety
+    BettiNumbers(variety)               compute the Betti numbers of a variety
     Grassmannian(int,int)               create a Grassmannian as a variety
     projectiveSpace(int)                create a projective space as a variety
     projectiveBundle(sheaf)             create a projective bundle as a variety
     integral(variety,poly)              degree of a 0-cycle on a variety
     makeSheaf(variety,poly)             create a sheaf
-    printSheaf(sheaf)                   print procedure for sheaves
+    printSheaf(sheaf)                   print procedure for a sheaf
     rankSheaf(sheaf)                    return the rank of a sheaf
     totalChernClass(sheaf)              compute the total Chern class of a sheaf
     ChernClass(sheaf,int)               compute the k-th Chern class of a sheaf
@@ -67,13 +76,13 @@ PROCEDURES:
     addSheaf(sheaf,sheaf)               make the direct sum of two sheaves
     makeGraph(list,list)                create a graph from a list of vertices
                                         and a list of edges
-    printGraph(graph)                   print procedure for graphs
+    printGraph(graph)                   print procedure for a graph
     moduliSpace(variety,int)            create a moduli space of stable maps as
                                         an algebraic stack
-    printStack(stack)                   print procedure for stacks
+    printStack(stack)                   print procedure for a stack
     dimStack(stack)                     compute the dimension of a stack
     fixedPoints(stack)                  compute the list of graphs corresponding
-                                        the fixed point components of a torus
+                                        to the fixed point components of a torus
                                         action on the stack
     contributionBundle(stack,graph)     compute the contribution bundle on a
                                         stack at a graph
@@ -111,6 +120,7 @@ KEYWORDS:       Intersection theory; Enumerative geometry; Schubert calculus;
 LIB "general.lib";
 LIB "homolog.lib";
 LIB "parallel.lib";
+LIB "linalg.lib"
 
 ////////////////////////////////////////////////////////////////////////////////
 /////////// create new objects in this library  ////////////////////////////////
@@ -128,6 +138,7 @@ EXAMPLE:    example mod_init(); shows an example
     newstruct("sheaf","variety currentVariety, poly ChernCharacter");
     newstruct("graph","list vertices, list edges");
     newstruct("stack","variety currentVariety, int degreeCurve");
+    newstruct("morphism","variety domain, variety codomain, poly upperstart");
 
     system("install","variety","print",printVariety,1);
     system("install","variety","*",productVariety,2);
@@ -136,6 +147,7 @@ EXAMPLE:    example mod_init(); shows an example
     system("install","sheaf","+",addSheaf,2);
     system("install","sheaf","-",quotSheaf,2);
     system("install","sheaf","^",symmetricPowerSheaf,2);
+    system("install","morphism","print",printMorphism,1);
     system("install","graph","print",printGraph,1);
     system("install","stack","print",printStack,1);
 }
@@ -1808,9 +1820,150 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    int d = 2;
     variety V = makeVariety(2,rels);
     ChowRing(V);
+}
+
+proc basis(variety V)
+"USAGE:     basis(V); V variety
+ASSUME:     V is an abstract variety
+RETURN:     list
+KEYWORDS:   basis, abstract variety, projective space, Grassmannian
+EXAMPLE:    example basis; shows an example
+"
+{
+    def R = V.baseRing;
+    setring R;
+    ideal b = kbase(std(V.relations));
+    list l;
+    int i;
+    for (i=1;i<=size(b);i++) {l[i]=b[i];}
+    return (l);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    variety V = makeVariety(2,rels);
+    basis(V);
+}
+
+proc intersectionMatrix(variety V)
+"USAGE:     intersectionMatrix(V); V variety
+ASSUME:     V is an abstract variety
+RETURN:     matrix
+KEYWORDS:   intersection matrix, basis, dual basis
+EXAMPLE:    example intersectionMatrix; shows an example
+"
+{
+    def R = V.baseRing;
+    setring R;
+    list b = basis(V);
+    int n = size(b);
+    matrix m[n][n];
+    int i,j;
+    for (i=1;i<=n;i++)
+    {
+        for (j=1;j<=n;j++)
+        {
+            m[i,j] = integral(V,b[i]*b[j]);
+        }
+    }
+    return (m);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    variety V = makeVariety(2,rels);
+    matrix m = intersectionMatrix(V);
+    print(m);
+}
+
+proc dualBasis(variety V)
+"USAGE:     dualBasis(V); V variety
+ASSUME:     V is an abstract variety
+RETURN:     list
+KEYWORDS:   dual basis, abstract variety, projective space, Grassmannian
+EXAMPLE:    example dualBasis; shows an example
+"
+{
+    def R = V.baseRing;
+    setring R;
+    list b = basis(V);
+    int n = size(b);
+    matrix v[n][1];
+    int i;
+    for (i=1;i<=n;i++) {v[i,1] = b[i];}
+    matrix m = inverse(intersectionMatrix(V))*v;
+    list l;
+    for (i=1;i<=n;i++) {l[i] = m[i,1];}
+    return (l);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    variety V = makeVariety(2,rels);
+    dualBasis(V);
+}
+
+proc BettiNumber(variety V, int k)
+"USAGE:     BettiNumber(V); V variety, k int
+ASSUME:     V is an abstract variety and k is a nonnegative integer
+RETURN:     int
+KEYWORDS:   Betti number, abstract variety, projective space, Grassmannian
+EXAMPLE:    example BettiNumber; shows an example
+"
+{
+    def R = V.baseRing;
+    setring R;
+    list b = basis(V);
+    int n = size(b);
+    int i,j;
+    for (j=1;j<=n;j++)
+    {
+        if (deg(b[j]) == k) {i++;}
+    }
+    return (i);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    variety V = makeVariety(2,rels);
+    BettiNumber(V,0);
+    BettiNumber(V,1);
+    BettiNumber(V,2);
+}
+
+proc BettiNumbers(variety V)
+"USAGE:     BettiNumbers(V); V variety
+ASSUME:     V is an abstract variety
+RETURN:     int
+KEYWORDS:   Betti numbers, abstract variety, projective space, Grassmannian
+EXAMPLE:    example BettiNumbers; shows an example
+"
+{
+    list l;
+    int i;
+    for (i=0;i<=V.dimension;i++)
+    {
+        l[i+1] = BettiNumber(V,i);
+    }
+    return (l);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    variety V = makeVariety(2,rels);
+    BettiNumbers(V);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2051,8 +2204,12 @@ EXAMPLE:    example integral; shows an example
 {
     def R = V.baseRing;
     setring R;
-    ideal rels = V.relations;
-    return (leadcoef(reduce(f,std(rels))));
+    if (V.dimension <> deg(f)) {return (0);}
+    else
+    {
+        ideal rels = V.relations;
+        return (leadcoef(reduce(f,std(rels))));
+    }
 }
 example
 {
@@ -2123,7 +2280,80 @@ example
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-////////// Procedures concerned with abstract sheaves ///////////////////////////////////
+///////////////// Procedures concerned with morphisms //////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+proc printMorphism(morphism f)
+"USAGE:     printMorphism(f); f morphism
+RETURN:     string
+INPUT:      a morphism
+THEORY:     This is the print function used by Singular to print a morphism.
+SEE ALSO:   makeMorphism
+EXAMPLE:    example printMorphism; shows an example
+"
+{
+    "A morphism from ", domain(f), " to ", codomain(f);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety P2 = projectiveSpace(2);
+    variety P5 = projectiveSpace(5);
+    def r = P2.baseRing;
+    setring r;
+    poly sb = 2h;
+    morphism f = makeMorphism(P2,P5,sb);
+    f;
+}
+
+proc makeMorphism(variety V1, variety V2, poly sb)
+"USAGE:     makeMorphism(V1,V2,sb); V1 variety, V2 variety, sb poly
+RETURN:     morphism
+THEORY:     create a morphism from an abstract variety to another one, and its
+            pullback homomorphism is defined by the polynomial sb.
+SEE ALSO:   printMorphism
+EXAMPLE:    example makeMorphism; shows an example
+"
+{
+    def R = basering;
+    morphism f;
+    f.domain = V1;
+    f.codomain = V2;
+    f.upperstart = sb;
+    return(f);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety P2 = projectiveSpace(2);
+    variety P5 = projectiveSpace(5);
+    def r = P2.baseRing;
+    setring r;
+    poly sb = 2h;
+    morphism f = makeMorphism(P2,P5,sb);
+    f;
+    domain(f);
+    codomain(f);
+    f.upperstart;
+}
+
+proc domain(morphism f)
+{
+    return (f.domain);
+}
+
+proc codomain(morphism f)
+{
+    return (f.codomain);
+}
+
+proc pullback(morphism f, list #)
+{
+
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////// Procedures concerned with abstract sheaves //////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 proc printSheaf(sheaf S)
