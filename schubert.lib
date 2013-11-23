@@ -74,6 +74,13 @@ PROCEDURES:
     symmetricPowerSheaf(sheaf,int)      make the k-th symmetric power of a sheaf
     quotSheaf(sheaf,sheaf)              make the quotient of two sheaves
     addSheaf(sheaf,sheaf)               make the direct sum of two sheaves
+    makeEsheaf(variety,intvec)          make an equivariant sheaf
+    printEsheaf(esheaf)                 print procedure for an equivariant sheaf
+    rankEsheaf(esheaf)                  return the rank of an equiavriant sheaf
+    dualEsheaf(esheaf)                  return the dual of an equivariant sheaf
+    tensoEsheaf(esheaf,esheaf)          return the tensor of two equivariant sheaves
+    symmetricPowerEsheaf(esheaf,int)    return the d-th symmetric power of an equivariant sheaf
+    eEulerClass(esheaf)                 return the Euler class of an equivariant sheaf
     makeGraph(list,list)                create a graph from a list of vertices
                                         and a list of edges
     printGraph(graph)                   print procedure for a graph
@@ -136,9 +143,10 @@ EXAMPLE:    example mod_init(); shows an example
 {
     newstruct("variety","int dimension, ring baseRing, ideal relations");
     newstruct("sheaf","variety currentVariety, poly ChernCharacter");
+    newstruct("esheaf","variety currentVariety, intvec weights");
     newstruct("graph","list vertices, list edges");
     newstruct("stack","variety currentVariety, int degreeCurve");
-    newstruct("morphism","variety domain, variety codomain, poly upperstart");
+    newstruct("morphism","variety domain, variety codomain, ideal upperstar");
 
     system("install","variety","print",printVariety,1);
     system("install","variety","*",productVariety,2);
@@ -147,6 +155,9 @@ EXAMPLE:    example mod_init(); shows an example
     system("install","sheaf","+",addSheaf,2);
     system("install","sheaf","-",quotSheaf,2);
     system("install","sheaf","^",symmetricPowerSheaf,2);
+    system("install","esheaf","print",printEsheaf,1);
+    system("install","esheaf","*",tensorEsheaf,2);
+    system("install","esheaf","^",symmetricPowerEsheaf,2);
     system("install","morphism","print",printMorphism,1);
     system("install","graph","print",printGraph,1);
     system("install","stack","print",printStack,1);
@@ -590,9 +601,9 @@ EXAMPLE:    example torusList; shows an example
     int i;
     int n = P.dimension;
     list l;
-    for (i=0;i<=n;i++)
+    for (i=1;i<=n+1;i++)
     {
-        l = insert(l,number(10^i),size(l));
+        l[i] = number(10^i);
     }
     return (l);
 }
@@ -2301,25 +2312,26 @@ example
     variety P5 = projectiveSpace(5);
     def r = P2.baseRing;
     setring r;
-    poly sb = 2h;
+    ideal sb = 2h;
     morphism f = makeMorphism(P2,P5,sb);
     f;
 }
 
-proc makeMorphism(variety V1, variety V2, poly sb)
-"USAGE:     makeMorphism(V1,V2,sb); V1 variety, V2 variety, sb poly
+proc makeMorphism(variety V1, variety V2, ideal sb)
+"USAGE:     makeMorphism(V1,V2,sb); V1 variety, V2 variety, sb ideal
 RETURN:     morphism
-THEORY:     create a morphism from an abstract variety to another one, and its
-            pullback homomorphism is defined by the polynomial sb.
+THEORY:     create a morphism from an abstract variety to another abstract
+            variety, and its pullback homomorphism is defined by the ideal sb;
 SEE ALSO:   printMorphism
 EXAMPLE:    example makeMorphism; shows an example
 "
 {
-    def R = basering;
+    def r = basering;
+    setring r;
     morphism f;
     f.domain = V1;
     f.codomain = V2;
-    f.upperstart = sb;
+    f.upperstar = sb;
     return(f);
 }
 example
@@ -2329,12 +2341,12 @@ example
     variety P5 = projectiveSpace(5);
     def r = P2.baseRing;
     setring r;
-    poly sb = 2h;
+    ideal sb = 2h;
     morphism f = makeMorphism(P2,P5,sb);
     f;
     domain(f);
     codomain(f);
-    f.upperstart;
+    f.upperstar;
 }
 
 proc domain(morphism f)
@@ -2347,9 +2359,30 @@ proc codomain(morphism f)
     return (f.codomain);
 }
 
-proc pullback(morphism f, list #)
+proc pullbackSheaf(morphism f, sheaf E)
 {
+    variety V1 = f.domain;
+    def r1 = V1.baseRing;
+    variety V2 = f.codomain;
+    def r2 = V2.baseRing;
+    setring r2;
+    poly ch = E.ChernCharacter;
+    setring r1;
+    map p = r2, f.upperstar;
+    poly CC = p(ch);
+    sheaf S = makeSheaf(V1,CC);
+    return (S);
+}
 
+proc pullback(morphism f, poly c)
+{
+    variety V1 = f.domain;
+    def r1 = V1.baseRing;
+    variety V2 = f.codomain;
+    def r2 = V2.baseRing;
+    setring r1;
+    map p = r2, f.upperstar;
+    return (p(c));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -2786,4 +2819,268 @@ example
     D;
     D.ChernCharacter == rankSheaf(D);
     totalChernClass(D) == 1;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////// Procedures concerned with abstract sheaves //////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+proc printEsheaf(esheaf E)
+"USAGE:     printEsheaf(E); E esheaf
+RETURN:     string
+INPUT:      an equivariant sheaf
+THEORY:     This is the print function used by Singular to print an equivariant
+            sheaf.
+SEE ALSO:   makeEsheaf, rankEsheaf
+EXAMPLE:    example printEsheaf; shows an example
+"
+{
+    "An equivariant sheaf of rank ", rankEsheaf(E);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety X;
+    intvec w = 1,2,3,4;
+    esheaf E = makeEsheaf(X,w);
+    E;
+}
+
+proc makeEsheaf(variety V, intvec w)
+"USAGE:     makeEsheaf(V,w); V variety, w intvec
+RETURN:     esheaf
+THEORY:     create an equivariant sheaf on an abstract variety, and its weights
+            are the elements of the list w.
+SEE ALSO:   printEsheaf, rankEsheaf
+EXAMPLE:    example makeEsheaf; shows an example
+"
+{
+    esheaf E;
+    E.currentVariety = V;
+    E.weights = w;
+    return(E);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety X;
+    intvec w = 1,2,3,4;
+    esheaf E = makeEsheaf(X,w);
+    E;
+}
+
+proc rankEsheaf(esheaf E)
+"USAGE:     rankEsheaf(E); E esheaf
+RETURN:     int
+INPUT:      E is an equivariant sheaf
+OUTPUT:     a positive integer which is the rank of an equivariant sheaf.
+SEE ALSO:   makeEsheaf, printEsheaf
+EXAMPLE:    example rankEsheaf; shows an example
+"
+{
+    intvec w = E.weights;
+    return (size(w));
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety X;
+    intvec w = 1,2,3,4;
+    esheaf E = makeEsheaf(X,w);
+    rankEsheaf(E);
+}
+
+proc dualEsheaf(esheaf E)
+"USAGE:     dualEsheaf(E); E esheaf
+RETURN:     esheaf
+INPUT:      E is an equivariant sheaf
+OUTPUT:     the dual of an equivariant sheaf.
+SEE ALSO:   makeEsheaf, printEsheaf, rankEsheaf, tensorEsheaf
+EXAMPLE:    example dualEsheaf; shows an example
+"
+{
+    esheaf S;
+    S.currentVariety = E.currentVariety;
+    intvec w = E.weights;
+    intvec l;
+    int i;
+    for (i=1;i<=size(w);i++) {l[i] = -w[i];}
+    S.weights = l;
+    return (S);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety X;
+    intvec w = 1,2,3,4;
+    esheaf E = makeEsheaf(X,w);
+    esheaf F = dualEsheaf(E);
+    F.weights;
+}
+
+proc tensorEsheaf(esheaf E, esheaf F)
+"USAGE:     tensorEsheaf(E,F); E esheaf, F esheaf
+RETURN:     esheaf
+INPUT:      E and F are two equivariant sheaves
+OUTPUT:     the tensor of two equivariant sheaves
+SEE ALSO:   makeEsheaf, printEsheaf, rankEsheaf, dualEsheaf
+EXAMPLE:    example tensorEsheaf; shows an example
+"
+{
+    esheaf S;
+    variety V1 = E.currentVariety;
+    variety V2 = F.currentVariety;
+    def R1 = V1.baseRing;
+    def R2 = V2.baseRing;
+    if (nvars(R1) < nvars(R2)) {S.currentVariety = V2;}
+    else {S.currentVariety = V1;}
+    int i,j;
+    intvec w1 = E.weights;
+    intvec w2 = F.weights;
+    list l;
+    for (i=1;i<=size(w1);i++)
+    {
+        for (j=1;j<=size(w2);j++)
+        {
+            l[size(l)+1] = w1[i]+w2[j];
+        }
+    }
+    intvec w;
+    for (i=1;i<=size(l);i++) {w[i] = l[i];}
+    S.weights = w;
+    return (S);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety X;
+    intvec w = 1,2,3,4;
+    esheaf E = makeEsheaf(X,w);
+    intvec v = 0,1,2;
+    esheaf F = makeEsheaf(X,v);
+    esheaf T = tensorEsheaf(E,F);
+    T.weights;
+    esheaf S = E*F; // tensor of E and F
+}
+
+proc symmetricPowerEsheaf(esheaf E, int d)
+"USAGE:     symmetricPowerEsheaf(E,d); E esheaf, d int
+RETURN:     esheaf
+INPUT:      E is an equivariant sheaf and d is an integer
+OUTPUT:     the d-th symmetric power of an equivariant sheaf
+SEE ALSO:   makeEsheaf, printEsheaf, rankEsheaf, dualEsheaf, tensorEsheaf
+EXAMPLE:    example symmetricPowerEsheaf; shows an example
+"
+{
+    esheaf S;
+    S.currentVariety = E.currentVariety;
+    intvec w = E.weights;
+    int r = rankEsheaf(E);
+    ring R = 0,x(1..r),dp;
+    setring R;
+    ideal I;
+    int i,j;
+    list l;
+    for (i=1;i<=r;i++) {I=I,var(i)^(d+1);}
+    ideal K = kbase(std(I));
+    for (i=1;i<=size(K);i++)
+    {
+        if (deg(K[i]) == d)
+        {
+            int t;
+            for (j=1;j<=r;j++) {t = t + leadexp(K[i])[j]*w[j];}
+            l[size(l)+1] = t;
+            kill t;
+        }
+    }
+    intvec v;
+    for (i=1;i<=size(l);i++) {v[i] = l[i];}
+    S.weights = v;
+    return (S);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety X;
+    intvec w = 2,3;
+    esheaf E = makeEsheaf(X,w);
+    esheaf B = symmetricPowerEsheaf(E,3);
+    B;
+    B.weights;
+    esheaf S = E^3;
+    S;
+}
+
+proc eEulerClass(esheaf E)
+"USAGE:     eEulerClass(E); E esheaf
+RETURN:     int
+THEORY:     this is a function to compute the euler class of an equivariant
+            sheaf.
+EXAMPLE:    example eEulerClass; shows an example
+{
+    return (product(E.weights));
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,x,dp;
+    variety X;
+    intvec w = 2,3;
+    esheaf E = makeEsheaf(X,w);
+    eEulerClass(E);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////// Examples ////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+proc lines(int n)
+"USAGE:     lines(n); n int
+RETURN:     number
+THEORY:     this is a function to compute the number of lines on a general
+            hypersurface of degree 2n - 3 in Pn.
+SEE ALSO:   linearSubspaces
+EXAMPLE:    example lines; shows an example
+"
+{
+    variety G = Grassmannian(n-1,n+1);
+    def r = G.baseRing;
+    setring r;
+    sheaf Q = makeSheaf(G,quotientBundle);
+    sheaf B = Q^(2*n-3);
+    return (integral(G,topChernClass(B)));
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,x,dp;
+    lines(2);
+    lines(3);
+    lines(4);
+}
+
+proc linearSubspaces(int k, int d, int n)
+"USAGE:     linearSubspaces(k,d,n); k int, d int, n int
+RETURN:     number
+THEORY:     this is a function to compute the number of k-planes on a
+            general hypersurface of degree d in Pn.
+            hypersurface of degree 2n - 3 in Pn.
+SEE ALSO:   lines
+EXAMPLE:    example linearSubspaces; shows an example
+"
+{
+    variety G = Grassmannian(n-k,n+1);
+    def r = G.baseRing;
+    setring r;
+    sheaf Q = makeSheaf(G,quotientBundle);
+    sheaf B = Q^d;
+    return (integral(G,topChernClass(B)));
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,x,dp;
+    linearSubspace(1,3,3);
+    linearSubspace(2,4,7);
+    linearSubspace(3,3,8);
 }
