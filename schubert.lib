@@ -78,7 +78,7 @@ PROCEDURES:
     printEsheaf(esheaf)                 print procedure for an equivariant sheaf
     rankEsheaf(esheaf)                  return the rank of an equiavriant sheaf
     dualEsheaf(esheaf)                  return the dual of an equivariant sheaf
-    tensoEsheaf(esheaf,esheaf)          return the tensor of two equivariant sheaves
+    tensorEsheaf(esheaf,esheaf)         return the tensor of two equivariant sheaves
     symmetricPowerEsheaf(esheaf,int)    return the d-th symmetric power of an equivariant sheaf
     eEulerClass(esheaf)                 return the Euler class of an equivariant sheaf
     makeGraph(list,list)                create a graph from a list of vertices
