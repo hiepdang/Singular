@@ -8,12 +8,14 @@ AUTHOR:     Hiep Dang,          email: hiep@mathematik.uni-kl.de
 
 OVERVIEW:
 
-    We implement new classes (variety, sheaf, stack, graph) and methods for
-    computing with them. An abstract variety is represented by a nonnegative
-    integer which is its dimension and a graded ring which is its Chow ring.
-    An abstract sheaf is represented by a variety and a polynomial which is its
-    Chern character. In particular, we implement the concrete varieties such as
-    projective spaces, Grassmannians, and projective bundles.
+    We implement new classes (variety, morphism, sheaf, esheaf, stack, graph)
+    and methods for computing with them. An abstract variety is represented by
+    a nonnegative integer which is its dimension and a graded ring which is its
+    Chow ring. An abstract sheaf is represented by a variety and a polynomial
+    which is its Chern character. In particular, we implement the concrete
+    varieties such as projective spaces, Grassmannians, and projective bundles.
+    A morphism between two abstract varieties is represented by its pullback
+    homomorphism.
 
     An important task of this library is related to the computation of
     Gromov-Witten invariants. In particular, we implement new tools for the
@@ -62,6 +64,8 @@ PROCEDURES:
     projectiveSpace(int)                create a projective space as a variety
     projectiveBundle(sheaf)             create a projective bundle as a variety
     integral(variety,poly)              degree of a 0-cycle on a variety
+    makeMorphism(variety,variety,ideal) make a morphism between two varieties
+    printMorphism(morphism)             print procedure for a morphism
     makeSheaf(variety,poly)             create a sheaf
     printSheaf(sheaf)                   print procedure for a sheaf
     rankSheaf(sheaf)                    return the rank of a sheaf
@@ -78,9 +82,14 @@ PROCEDURES:
     printEsheaf(esheaf)                 print procedure for an equivariant sheaf
     rankEsheaf(esheaf)                  return the rank of an equiavriant sheaf
     dualEsheaf(esheaf)                  return the dual of an equivariant sheaf
-    tensorEsheaf(esheaf,esheaf)         return the tensor of two equivariant sheaves
-    symmetricPowerEsheaf(esheaf,int)    return the d-th symmetric power of an equivariant sheaf
-    eEulerClass(esheaf)                 return the Euler class of an equivariant sheaf
+    tensorEsheaf(esheaf,esheaf)         return the tensor of two equivariant
+                                        sheaves
+    symmetricPowerEsheaf(esheaf,int)    return the d-th symmetric power of an
+                                        equivariant sheaf
+    eEulerClass(esheaf)                 return the Euler class of an equivariant
+                                        sheaf
+    eChernClass(esheaf,int)             return the k-th Chern class of an
+                                        equivariant sheaf
     makeGraph(list,list)                create a graph from a list of vertices
                                         and a list of edges
     printGraph(graph)                   print procedure for a graph
@@ -127,7 +136,8 @@ KEYWORDS:       Intersection theory; Enumerative geometry; Schubert calculus;
 LIB "general.lib";
 LIB "homolog.lib";
 LIB "parallel.lib";
-LIB "linalg.lib"
+LIB "linalg.lib";
+LIB "poly.lib";
 
 ////////////////////////////////////////////////////////////////////////////////
 /////////// create new objects in this library  ////////////////////////////////
@@ -1960,13 +1970,13 @@ KEYWORDS:   Betti numbers, abstract variety, projective space, Grassmannian
 EXAMPLE:    example BettiNumbers; shows an example
 "
 {
-    list l;
+    intvec b;
     int i;
     for (i=0;i<=V.dimension;i++)
     {
-        l[i+1] = BettiNumber(V,i);
+        b[i+1] = BettiNumber(V,i);
     }
-    return (l);
+    return (b);
 }
 example
 {
@@ -2011,7 +2021,7 @@ EXAMPLE:    example Grassmannian; shows examples
     int i,j;
     poly v = 1;
     poly u = 1;
-    for (j=1;j<=n-k;j++) {v=v+q(j);}
+    for (j=1;j<=n-k;j++) {v=v+var(j);}
     list l;
     for (i=1;i<=k;i++)
     {
@@ -2349,41 +2359,41 @@ example
     f.upperstar;
 }
 
-proc domain(morphism f)
-{
-    return (f.domain);
-}
+//proc domain(morphism f)
+//{
+//    return (f.domain);
+//}
 
-proc codomain(morphism f)
-{
-    return (f.codomain);
-}
+//proc codomain(morphism f)
+//{
+//    return (f.codomain);
+//}
 
-proc pullbackSheaf(morphism f, sheaf E)
-{
-    variety V1 = f.domain;
-    def r1 = V1.baseRing;
-    variety V2 = f.codomain;
-    def r2 = V2.baseRing;
-    setring r2;
-    poly ch = E.ChernCharacter;
-    setring r1;
-    map p = r2, f.upperstar;
-    poly CC = p(ch);
-    sheaf S = makeSheaf(V1,CC);
-    return (S);
-}
+//proc pullbackSheaf(morphism f, sheaf E)
+//{
+//    variety V1 = f.domain;
+//    def r1 = V1.baseRing;
+//    variety V2 = f.codomain;
+//    def r2 = V2.baseRing;
+//    setring r2;
+//    poly ch = E.ChernCharacter;
+//    setring r1;
+//    map p = r2, f.upperstar;
+//    poly CC = p(ch);
+//    sheaf S = makeSheaf(V1,CC);
+//    return (S);
+//}
 
-proc pullback(morphism f, poly c)
-{
-    variety V1 = f.domain;
-    def r1 = V1.baseRing;
-    variety V2 = f.codomain;
-    def r2 = V2.baseRing;
-    setring r1;
-    map p = r2, f.upperstar;
-    return (p(c));
-}
+//proc pullback(morphism f, poly c)
+//{
+//    variety V1 = f.domain;
+//    def r1 = V1.baseRing;
+//    variety V2 = f.codomain;
+//    def r2 = V2.baseRing;
+//    setring r1;
+//    map p = r2, f.upperstar;
+//    return (p(c));
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////// Procedures concerned with abstract sheaves //////////////////////////
@@ -3014,7 +3024,7 @@ example
 proc eEulerClass(esheaf E)
 "USAGE:     eEulerClass(E); E esheaf
 RETURN:     int
-THEORY:     this is a function to compute the euler class of an equivariant
+THEORY:     this is a function to compute the Euler class of an equivariant
             sheaf.
 EXAMPLE:    example eEulerClass; shows an example
 {
@@ -3030,57 +3040,88 @@ example
     eEulerClass(E);
 }
 
+proc eChernClass(esheaf E, int k)
+"USAGE:     eChernClass(E); E esheaf, k int
+RETURN:     int
+THEORY:     this is a function to compute the k-th Chern class of an
+            equivariant sheaf.
+EXAMPLE:    example eChernClass; shows an example
+{
+    //if (k==0) {return (1);}
+    int r = rankEsheaf(E);
+    ring R = 0,x(1..r),dp;
+    poly s = elemSymmId(r)[k];
+    intvec v = E.weights;
+    int i;
+    for (i=1;i<=r;i++) {s = subst(s,x(i),v[i]);}
+    return (int(s));
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,x,dp;
+    variety X;
+    intvec w = 2,3;
+    esheaf E = makeEsheaf(X,w);
+    eChernClass(E);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////// Examples ////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-proc lines(int n)
-"USAGE:     lines(n); n int
-RETURN:     number
-THEORY:     this is a function to compute the number of lines on a general
-            hypersurface of degree 2n - 3 in Pn.
-SEE ALSO:   linearSubspaces
-EXAMPLE:    example lines; shows an example
-"
-{
-    variety G = Grassmannian(n-1,n+1);
-    def r = G.baseRing;
-    setring r;
-    sheaf Q = makeSheaf(G,quotientBundle);
-    sheaf B = Q^(2*n-3);
-    return (integral(G,topChernClass(B)));
-}
-example
-{
-    "EXAMPLE:"; echo=2;
-    ring r = 0,x,dp;
-    lines(2);
-    lines(3);
-    lines(4);
-}
+//proc lines(int n)
+//"USAGE:     lines(n); n int
+//RETURN:     number
+//THEORY:     this is a function to compute the number of lines on a general
+//            hypersurface of degree 2n - 3 in Pn.
+//SEE ALSO:   linearSubspaces
+//EXAMPLE:    example lines; shows an example
+//"
+//{
+//    variety G = Grassmannian(n-1,n+1);
+//    def r = G.baseRing;
+//    setring r;
+//    sheaf Q = makeSheaf(G,quotientBundle);
+//    sheaf B = Q^(2*n-3);
+//    return (integral(G,topChernClass(B)));
+//}
+//example
+//{
+//    "EXAMPLE:"; echo=2;
+//    ring r = 0,x,dp;
+//    lines(2);
+//    lines(3);
+//    lines(4);
+//}
 
-proc linearSubspaces(int k, int d, int n)
-"USAGE:     linearSubspaces(k,d,n); k int, d int, n int
-RETURN:     number
-THEORY:     this is a function to compute the number of k-planes on a
-            general hypersurface of degree d in Pn.
-            hypersurface of degree 2n - 3 in Pn.
-SEE ALSO:   lines
-EXAMPLE:    example linearSubspaces; shows an example
-"
-{
-    variety G = Grassmannian(n-k,n+1);
-    def r = G.baseRing;
-    setring r;
-    sheaf Q = makeSheaf(G,quotientBundle);
-    sheaf B = Q^d;
-    return (integral(G,topChernClass(B)));
-}
-example
-{
-    "EXAMPLE:"; echo=2;
-    ring r = 0,x,dp;
-    linearSubspace(1,3,3);
-    linearSubspace(2,4,7);
-    linearSubspace(3,3,8);
-}
+//proc linearSubspaces(int k, int d, int n)
+//"USAGE:     linearSubspaces(k,d,n); k int, d int, n int
+//RETURN:     number
+//THEORY:     this is a function to compute the number of k-planes on a
+//            general hypersurface of degree d in Pn.
+//            hypersurface of degree 2n - 3 in Pn.
+//SEE ALSO:   lines
+//EXAMPLE:    example linearSubspaces; shows an example
+//"
+//{
+//    variety G = Grassmannian(n-k,n+1);
+//    def r = G.baseRing;
+//    setring r;
+//    sheaf Q = makeSheaf(G,quotientBundle);
+//    sheaf B = Q^d;
+//    return (integral(G,topChernClass(B)));
+//}
+//example
+//{
+//    "EXAMPLE:"; echo=2;
+//    ring r = 0,x,dp;
+//    linearSubspace(1,3,3);
+//    linearSubspace(2,4,7);
+//    linearSubspace(3,3,8);
+//}
+
+//proc linesBott(int n)
+//{
+//    variety G = Grassmannian(k+1)
+//}
