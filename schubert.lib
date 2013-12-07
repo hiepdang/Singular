@@ -153,7 +153,7 @@ EXAMPLE:    example mod_init(); shows an example
 {
     newstruct("variety","int dimension, ring baseRing, ideal relations");
     newstruct("sheaf","variety currentVariety, poly ChernCharacter");
-    newstruct("esheaf","variety currentVariety, intvec weights");
+    newstruct("esheaf","intvec weights");
     newstruct("graph","list vertices, list edges");
     newstruct("stack","variety currentVariety, int degreeCurve");
     newstruct("morphism","variety domain, variety codomain, ideal upperstar");
@@ -2838,52 +2838,49 @@ example
 proc printEsheaf(esheaf E)
 "USAGE:     printEsheaf(E); E esheaf
 RETURN:     string
-INPUT:      an equivariant sheaf
-THEORY:     This is the print function used by Singular to print an equivariant
-            sheaf.
+INPUT:      a T-equivariant sheaf over a point
+THEORY:     This is the print function used by Singular to print a T-equivariant
+            sheaf over a point.
 SEE ALSO:   makeEsheaf, rankEsheaf
 EXAMPLE:    example printEsheaf; shows an example
 "
 {
-    "An equivariant sheaf of rank ", rankEsheaf(E);
+    "A T-equivariant sheaf of rank ", rankEsheaf(E), " over a point";
 }
 example
 {
     "EXAMPLE:"; echo=2;
-    variety X;
     intvec w = 1,2,3,4;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     E;
 }
 
-proc makeEsheaf(variety V, intvec w)
-"USAGE:     makeEsheaf(V,w); V variety, w intvec
+proc makeEsheaf(intvec w)
+"USAGE:     makeEsheaf(w); w intvec
 RETURN:     esheaf
-THEORY:     create an equivariant sheaf on an abstract variety, and its weights
+THEORY:     create an T-equivariant sheaf over a point, and its weights
             are the elements of the list w.
 SEE ALSO:   printEsheaf, rankEsheaf
 EXAMPLE:    example makeEsheaf; shows an example
 "
 {
     esheaf E;
-    E.currentVariety = V;
     E.weights = w;
     return(E);
 }
 example
 {
     "EXAMPLE:"; echo=2;
-    variety X;
     intvec w = 1,2,3,4;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     E;
 }
 
 proc rankEsheaf(esheaf E)
 "USAGE:     rankEsheaf(E); E esheaf
 RETURN:     int
-INPUT:      E is an equivariant sheaf
-OUTPUT:     a positive integer which is the rank of an equivariant sheaf.
+INPUT:      E is a T-equivariant sheaf over a point
+OUTPUT:     a positive integer which is the rank of E.
 SEE ALSO:   makeEsheaf, printEsheaf
 EXAMPLE:    example rankEsheaf; shows an example
 "
@@ -2894,23 +2891,21 @@ EXAMPLE:    example rankEsheaf; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    variety X;
     intvec w = 1,2,3,4;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     rankEsheaf(E);
 }
 
 proc dualEsheaf(esheaf E)
 "USAGE:     dualEsheaf(E); E esheaf
 RETURN:     esheaf
-INPUT:      E is an equivariant sheaf
-OUTPUT:     the dual of an equivariant sheaf.
+INPUT:      E is a T-equivariant sheaf over a point
+OUTPUT:     the dual of E.
 SEE ALSO:   makeEsheaf, printEsheaf, rankEsheaf, tensorEsheaf
 EXAMPLE:    example dualEsheaf; shows an example
 "
 {
     esheaf S;
-    S.currentVariety = E.currentVariety;
     intvec w = E.weights;
     intvec l;
     int i;
@@ -2921,9 +2916,8 @@ EXAMPLE:    example dualEsheaf; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    variety X;
     intvec w = 1,2,3,4;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     esheaf F = dualEsheaf(E);
     F.weights;
 }
@@ -2931,19 +2925,13 @@ example
 proc tensorEsheaf(esheaf E, esheaf F)
 "USAGE:     tensorEsheaf(E,F); E esheaf, F esheaf
 RETURN:     esheaf
-INPUT:      E and F are two equivariant sheaves
-OUTPUT:     the tensor of two equivariant sheaves
+INPUT:      E and F are two T-equivariant sheaves over a point
+OUTPUT:     the tensor product of E and F
 SEE ALSO:   makeEsheaf, printEsheaf, rankEsheaf, dualEsheaf
 EXAMPLE:    example tensorEsheaf; shows an example
 "
 {
     esheaf S;
-    variety V1 = E.currentVariety;
-    variety V2 = F.currentVariety;
-    def R1 = V1.baseRing;
-    def R2 = V2.baseRing;
-    if (nvars(R1) < nvars(R2)) {S.currentVariety = V2;}
-    else {S.currentVariety = V1;}
     int i,j;
     intvec w1 = E.weights;
     intvec w2 = F.weights;
@@ -2963,27 +2951,25 @@ EXAMPLE:    example tensorEsheaf; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    variety X;
     intvec w = 1,2,3,4;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     intvec v = 0,1,2;
-    esheaf F = makeEsheaf(X,v);
+    esheaf F = makeEsheaf(v);
     esheaf T = tensorEsheaf(E,F);
     T.weights;
-    esheaf S = E*F; // tensor of E and F
+    esheaf S = E*F; // tensor product of E and F
 }
 
 proc symmetricPowerEsheaf(esheaf E, int d)
 "USAGE:     symmetricPowerEsheaf(E,d); E esheaf, d int
 RETURN:     esheaf
-INPUT:      E is an equivariant sheaf and d is an integer
-OUTPUT:     the d-th symmetric power of an equivariant sheaf
+INPUT:      E is a T-equivariant sheaf over a point and d is an integer
+OUTPUT:     the d-th symmetric power of E
 SEE ALSO:   makeEsheaf, printEsheaf, rankEsheaf, dualEsheaf, tensorEsheaf
 EXAMPLE:    example symmetricPowerEsheaf; shows an example
 "
 {
     esheaf S;
-    S.currentVariety = E.currentVariety;
     intvec w = E.weights;
     int r = rankEsheaf(E);
     ring R = 0,x(1..r),dp;
@@ -3011,9 +2997,8 @@ EXAMPLE:    example symmetricPowerEsheaf; shows an example
 example
 {
     "EXAMPLE:"; echo=2;
-    variety X;
     intvec w = 2,3;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     esheaf B = symmetricPowerEsheaf(E,3);
     B;
     B.weights;
@@ -3024,8 +3009,8 @@ example
 proc eEulerClass(esheaf E)
 "USAGE:     eEulerClass(E); E esheaf
 RETURN:     int
-THEORY:     this is a function to compute the Euler class of an equivariant
-            sheaf.
+THEORY:     this is a function to compute the T-equivariant Euler class of a
+            T-equivariant sheaf over a point.
 EXAMPLE:    example eEulerClass; shows an example
 {
     return (product(E.weights));
@@ -3034,7 +3019,6 @@ example
 {
     "EXAMPLE:"; echo=2;
     ring r = 0,x,dp;
-    variety X;
     intvec w = 2,3;
     esheaf E = makeEsheaf(X,w);
     eEulerClass(E);
@@ -3043,8 +3027,8 @@ example
 proc eChernClass(esheaf E, int k)
 "USAGE:     eChernClass(E); E esheaf, k int
 RETURN:     int
-THEORY:     this is a function to compute the k-th Chern class of an
-            equivariant sheaf.
+THEORY:     this is a function to compute the k-th T-equivariant Chern class
+            of a T-equivariant sheaf over a point.
 EXAMPLE:    example eChernClass; shows an example
 {
     //if (k==0) {return (1);}
@@ -3060,9 +3044,8 @@ example
 {
     "EXAMPLE:"; echo=2;
     ring r = 0,x,dp;
-    variety X;
     intvec w = 2,3;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     eChernClass(E);
 }
 
