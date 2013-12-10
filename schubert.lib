@@ -78,18 +78,22 @@ PROCEDURES:
     symmetricPowerSheaf(sheaf,int)      make the k-th symmetric power of a sheaf
     quotSheaf(sheaf,sheaf)              make the quotient of two sheaves
     addSheaf(sheaf,sheaf)               make the direct sum of two sheaves
-    makeEsheaf(variety,intvec)          make an equivariant sheaf
-    printEsheaf(esheaf)                 print procedure for an equivariant sheaf
-    rankEsheaf(esheaf)                  return the rank of an equiavriant sheaf
-    dualEsheaf(esheaf)                  return the dual of an equivariant sheaf
-    tensorEsheaf(esheaf,esheaf)         return the tensor of two equivariant
-                                        sheaves
-    symmetricPowerEsheaf(esheaf,int)    return the d-th symmetric power of an
-                                        equivariant sheaf
-    eEulerClass(esheaf)                 return the Euler class of an equivariant
-                                        sheaf
-    eChernClass(esheaf,int)             return the k-th Chern class of an
-                                        equivariant sheaf
+    makeEsheaf(intvec)                  make a T-equivariant sheaf over a point
+    printEsheaf(esheaf)                 print procedure for a T-equivariant
+                                        sheaf over a point
+    rankEsheaf(esheaf)                  return the rank of a T-equiavriant sheaf
+                                        over a point
+    dualEsheaf(esheaf)                  return the dual of a T-equivariant sheaf
+                                        over a point
+    tensorEsheaf(esheaf,esheaf)         return the tensor of two T-equivariant
+                                        sheaves over a point
+    symmetricPowerEsheaf(esheaf,int)    return the d-th symmetric power of a
+                                        T-equivariant sheaf over a point
+    eEulerClass(esheaf)                 return the T-equivariant Euler class of
+                                        a T-equivariant sheaf over a point
+    eChernClass(esheaf,int)             return the k-th T-equivariant Chern
+                                        class of a T-equivariant sheaf over a
+                                        point
     makeGraph(list,list)                create a graph from a list of vertices
                                         and a list of edges
     printGraph(graph)                   print procedure for a graph
@@ -127,7 +131,8 @@ PROCEDURES:
     dualPartition(list)                 compute the dual of a partition
 
 KEYWORDS:       Intersection theory; Enumerative geometry; Schubert calculus;
-                Bott's formula; Gromov-Witten invariants.
+                Bott's formula; Gromov-Witten invariants;
+                Equivariant intersection theory;
 
 ";
 
@@ -2845,7 +2850,7 @@ SEE ALSO:   makeEsheaf, rankEsheaf
 EXAMPLE:    example printEsheaf; shows an example
 "
 {
-    "A T-equivariant sheaf of rank ", rankEsheaf(E), " over a point";
+    "A T-equivariant sheaf of rank", rankEsheaf(E), "over a point";
 }
 example
 {
@@ -2858,8 +2863,8 @@ example
 proc makeEsheaf(intvec w)
 "USAGE:     makeEsheaf(w); w intvec
 RETURN:     esheaf
-THEORY:     create an T-equivariant sheaf over a point, and its weights
-            are the elements of the list w.
+THEORY:     create a T-equivariant sheaf over a point, and its weights
+            are the elements of the intvec w.
 SEE ALSO:   printEsheaf, rankEsheaf
 EXAMPLE:    example makeEsheaf; shows an example
 "
@@ -3020,7 +3025,7 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,x,dp;
     intvec w = 2,3;
-    esheaf E = makeEsheaf(X,w);
+    esheaf E = makeEsheaf(w);
     eEulerClass(E);
 }
 
@@ -3047,6 +3052,85 @@ example
     intvec w = 2,3;
     esheaf E = makeEsheaf(w);
     eChernClass(E);
+}
+
+//proc fixedPointsGrassmannian(int k, int n)
+//{
+//    return (subsets(k,n));
+//}
+
+proc subsets(int k, int n)
+"USAGE:     subsets(k,n); k int, n int
+RETURN:     list
+THEORY:     this is a function to create a list of all k-subsets of an n-set.
+EXAMPLE:    example subsets; shows an example
+{
+    list l;
+    intvec v = 1..k;
+    if (k==1)
+    {
+        for (int i=1;i<=n;i++)
+        {
+            intvec x = i;
+            l[size(l)+1] = x;
+            kill x;
+        }
+        return (l);
+    }
+    else
+    {
+        if (k==n) {return (list(v));}
+        else
+        {
+            list l1 = subsets(k-1,n-1);
+            for (int i=1;i<=size(l1);i++)
+            {
+                l1[i][size(l1[i])+1] = n;
+            }
+            return (subsets(k,n-1)+l1);
+            kill l1;
+        }
+    }
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    //ring r = 0,x,dp;
+    subsets(2,4);
+    subsets(3,5);
+}
+
+proc differentIntvec(int n, intvec v)
+"USAGE:     differentIntvec(k,n); n int, v intvec
+RETURN:     intvec
+THEORY:     this is a function to create an intvec from another intvec.
+EXAMPLE:    example differentIntvec; shows an example
+{
+    intvec w = 1..n;
+    for (int k=1;k<=size(v);k++)
+    {
+        w[v[k]] = 0;
+    }
+    list l;
+    for (int i=1;i<=n;i++)
+    {
+        if (w[i] <> 0)
+        {
+            l[size(l)+1] = w[i];
+        }
+    }
+    intvec y;
+    for (int j=1;j<=size(l);j++)
+    {
+        y[j] = l[j];
+    }
+    return (y);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    list l = subsets(2,4);
+    differentIntvec(4,l[1]);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
