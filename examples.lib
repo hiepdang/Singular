@@ -14,13 +14,13 @@ proc degreeFano(int k, int d, int n)
 //compute the Gromov-Witten invariants for lines.
 proc gwLines(int k, int a, int b)
 {
-    variety G = Grassmannian(2,k+2);
-    def r = G.baseRing;
-    setring r;
-    sheaf S = makeSheaf(G,subBundle);
-    sheaf B = dualSheaf(S)^(k+2);
-    poly qa = SchubertClass(list(a-1));
-    poly qb = SchubertClass(list(b-1));
-    poly qc = SchubertClass(list(k-a-b-1));
-    return (integral(G,topChernClass(B)*qa*qb*qc));
+  variety G = Grassmannian(2,k+2);
+  def r = G.baseRing;
+  setring r;
+  sheaf S = makeSheaf(G,subBundle);
+  sheaf B = dualSheaf(S)^(k+2);
+  poly qa = SchubertClass(list(a-1));
+  poly qb = SchubertClass(list(b-1));
+  poly qc = SchubertClass(list(k-a-b-1));
+  return (integral(G,topChernClass(B)*qa*qb*qc));
 }
