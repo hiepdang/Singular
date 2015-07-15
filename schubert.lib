@@ -4,7 +4,8 @@ category="Algebraic Geometry";
 info="
 LIBRARY:    schubert.lib    Proceduces for Intersection Theory
 
-AUTHOR:     Hiep Dang,          email: hiepdt_tt@dlu.edu.vn
+AUTHOR:     Hiep Tuan Dang,         email: hiepdt@dlu.edu.vn
+            Wolfram Decker,         email: decker@mathematik.uni-kl.de
 
 OVERVIEW:
 
@@ -143,6 +144,7 @@ LIB "homolog.lib";
 LIB "parallel.lib";
 LIB "linalg.lib";
 LIB "poly.lib";
+//LIB "ellipticcovers.lib";
 
 ////////////////////////////////////////////////////////////////////////////////
 /////////// create new objects in this library  ////////////////////////////////
@@ -156,7 +158,7 @@ KEYWORDS:   variety, sheaf, stack, graph
 EXAMPLE:    example mod_init(); shows an example
 "
 {
-    newstruct("variety","int dimension, ring baseRing, ideal relations");
+    newstruct("variety","int dimension, ring baseRing, ideal relations, poly point");
     newstruct("sheaf","variety currentVariety, poly ChernCharacter");
     newstruct("esheaf","intvec weights");
     newstruct("graph","list vertices, list edges");
@@ -1795,13 +1797,14 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels, point);
     V;
 }
 
-proc makeVariety(int d, ideal i)
-"USAGE:     makeVariety(d,i); d int, i ideal
-ASSUME:     d is a nonnegative integer, i is an ideal
+proc makeVariety(int d, ideal i, poly p)
+"USAGE:     makeVariety(d,i); d int, i ideal, p poly
+ASSUME:     d is a nonnegative integer, i is an ideal, p is a polynomial
 RETURN:     variety
 THEORY:     create an abstract variety which has dimension d, and its Chow ring
             should be a quotient ring
@@ -1814,6 +1817,7 @@ EXAMPLE:    example makeVariety; shows an example
     V.dimension = d;
     V.baseRing = R;
     V.relations = i;
+    V.point = p; 
     return(V);
 }
 example
@@ -1821,10 +1825,12 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
     V;
     V.dimension;
     V.relations;
+    V.point;
 }
 
 proc ChowRing(variety V)
@@ -1846,8 +1852,106 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
     ChowRing(V);
+}
+
+static proc chernvars(variety V)
+"USAGE:     chernvars(V); V variety
+ASSUME:     V is an abstract variety
+RETURN:     list
+KEYWORDS:   Chern variables, abstract variety
+EXAMPLE:    example chernvars; shows an example
+"
+{
+    return (ringlist(V.baseRing)[2]);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
+    chernvars(V);
+}
+
+static proc degrees(variety V)
+"USAGE:     degrees(V); V variety
+ASSUME:     V is an abstract variety
+RETURN:     intvec
+KEYWORDS:   degrees, abstract variety
+EXAMPLE:    example degrees; shows an example
+"
+{
+    return (ringlist(V.baseRing)[3][1][2]);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
+    degrees(V);
+}
+
+
+proc monomials(variety V, int d)
+"USAGE:     monomials(V,d); V variety, d int
+ASSUME:     V is an abstract variety
+RETURN:     list
+KEYWORDS:   monomials, abstract variety
+EXAMPLE:    example monomials; shows an example
+"
+{
+    def R = V.baseRing;
+    setring R;
+    list L;
+    list K;
+    int i,k,h;
+    for (i=0;i<=d;i++) {L = L + list(maxideal(i));}
+    for (k=1;k<=size(L);k++)
+    {
+        for (h=1;h<=size(L[k]);h++)
+        {
+            if (deg(L[k][h]) == d) {K = K + list(L[k][h]);}
+        }
+    }
+    return (K);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0, (h,e), wp(1,1);
+    ideal rels = he,h2+e2;
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
+    monomials(V,2);
+}
+
+proc topMonomialValues(variety V)
+"USAGE:     topMonomialValues(V); V variety
+ASSUME:     V is an abstract variety
+RETURN:     list
+KEYWORDS:   top monomial values, abstract variety, projective space, Grassmannian
+EXAMPLE:    example topMonomialValues; shows an example
+"
+{
+    def R = V.baseRing;
+    setring R;
+    int d = V.dimension;
+    list l = monomials(V,d)
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0,(h,e),wp(1,1);
+    ideal rels = he,h2+e2;
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
+    topMonomialValues(V);
 }
 
 proc basis(variety V)
@@ -1871,7 +1975,8 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
     basis(V);
 }
 
@@ -1903,7 +2008,8 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
     matrix m = intersectionMatrix(V);
     print(m);
 }
@@ -1921,11 +2027,11 @@ EXAMPLE:    example dualBasis; shows an example
     list b = basis(V);
     int n = size(b);
     matrix v[n][1];
-    int i;
+    int i,j;
     for (i=1;i<=n;i++) {v[i,1] = b[i];}
     matrix m = inverse(intersectionMatrix(V))*v;
     list l;
-    for (i=1;i<=n;i++) {l[i] = m[i,1];}
+    for (j=1;j<=n;j++) {l[j] = m[j,1];}
     return (l);
 }
 example
@@ -1933,7 +2039,8 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
     dualBasis(V);
 }
 
@@ -1961,7 +2068,8 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
     BettiNumber(V,0);
     BettiNumber(V,1);
     BettiNumber(V,2);
@@ -1988,7 +2096,8 @@ example
     "EXAMPLE:"; echo=2;
     ring r = 0,(h,e),wp(1,1);
     ideal rels = he,h2+e2;
-    variety V = makeVariety(2,rels);
+    poly point = h2;
+    variety V = makeVariety(2,rels,point);
     BettiNumbers(V);
 }
 
@@ -3017,6 +3126,7 @@ RETURN:     int
 THEORY:     this is a function to compute the T-equivariant Euler class of a
             T-equivariant sheaf over a point.
 EXAMPLE:    example eEulerClass; shows an example
+"
 {
     return (product(E.weights));
 }
@@ -3035,6 +3145,7 @@ RETURN:     int
 THEORY:     this is a function to compute the k-th T-equivariant Chern class
             of a T-equivariant sheaf over a point.
 EXAMPLE:    example eChernClass; shows an example
+"
 {
     //if (k==0) {return (1);}
     int r = rankEsheaf(E);
@@ -3064,6 +3175,7 @@ proc subsets(int k, int n)
 RETURN:     list
 THEORY:     this is a function to create a list of all k-subsets of an n-set.
 EXAMPLE:    example subsets; shows an example
+"
 {
     list l;
     intvec v = 1..k;
@@ -3105,6 +3217,7 @@ proc differentIntvec(int n, intvec v)
 RETURN:     intvec
 THEORY:     this is a function to create an intvec from another intvec.
 EXAMPLE:    example differentIntvec; shows an example
+"
 {
     intvec w = 1..n;
     for (int k=1;k<=size(v);k++)
@@ -3131,6 +3244,42 @@ example
     "EXAMPLE:"; echo=2;
     list l = subsets(2,4);
     differentIntvec(4,l[1]);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////// Kontsevich's formula //////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+proc kontsevich(int d)
+"USAGE:     kontsevich(d); d int
+RETURN:     int
+THEORY:     This is a function to compute the number of rational curves of 
+            degree d passing through 3d-1 general points in P^2. The results
+            are also the genus zero Gromov-Witten invariants for P^2.
+EXAMPLE:    example kontsevich; shows an example
+"
+{
+    if (d==1) {return (1);}
+    if (d==2) {return (1);}
+    else
+    {
+        bigint f=0;
+        for (int i=1;i<d;i++)
+        {
+            bigint a = kontsevich(i);
+            bigint b = kontsevich(d-i);
+            f = f + i^2*(d-i)*((d-i)*binomial(3*d-4,3*i-2)-i*binomial(3*d-4,3*i-1))*a*b;
+            kill a,b;
+        }
+        return (f);
+    }
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    ring r = 0, x, dp;
+    kontsevich(3);
+    kontsevich(4);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
