@@ -1942,7 +1942,7 @@ EXAMPLE:    example topMonomialValues; shows an example
     def R = V.baseRing;
     setring R;
     int d = V.dimension;
-    list l = monomials(V,d)
+    list l = monomials(V,d);
 }
 example
 {
