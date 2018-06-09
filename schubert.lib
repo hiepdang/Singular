@@ -2093,6 +2093,69 @@ example
     SchubertClass(p);
 }
 
+proc QtitleClass(list p)
+"USAGE:     QtitleClass(p); p list
+INPUT:      a list of integers which is a partition
+RETURN:     poly
+PURPOSE:    compute the Q title classes on a Grassmannian.
+EXAMPLE:    example QtitleClass; shows an example
+"
+{
+    def R = basering;
+    setring R;
+    poly Q;
+    if (size(p) == 1) {Q = Q + var(p[1]);}
+    if (size(p) == 2)
+    {
+        Q = Q + var(p[1])*var(p[2]);
+        int m = min(nvars(R)-p[1],p[2]-1);
+        int k;
+        for (k = 1; k <= m; k++)
+        {
+            Q = Q + 2*(-1)^k*var(p[1]+k)*var(p[2]-k);
+        }
+        if (nvars(R)-p[1] >= p[2])
+        {
+            Q = Q + 2*(-1)^p[2]*var(p[1]+p[2]);
+        }
+    }
+    if (size(p) > 2)
+    {
+        if (size(p) mod 2 == 0)
+        {
+            int i;
+            for (i = 1; i <= size(p)-1; i++)
+            {
+                list p1 = delete(p,i);
+                list p2 = delete(p1,size(p)-1);
+                list p3 = p[i],p[size(p)];
+                Q = Q + (-1)^(i-1)*QtitleClass(p3)*QtitleClass(p2);
+                kill p1,p2,p3;
+            }
+        }
+        else
+        {
+            int j;
+            for (j = 1; j <= size(p); j++)
+            {
+                list p4 = delete(p,j);
+                Q = Q + (-1)^(j-1)*var(p[j])*QtitleClass(p4);
+                kill p4;
+            }
+        }
+    }
+    return (Q);
+}
+example
+{
+    "EXAMPLE:"; echo=2;
+    variety G = Grassmannian(5,10);
+    def r = G.baseRing;
+    setring r;
+    list p = 4,2,1;
+    QtitleClass(p);
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 proc dualPartition(int k, int n, list p)
