@@ -2093,12 +2093,12 @@ example
     SchubertClass(p);
 }
 
-proc QtitleClass(list p)
-"USAGE:     QtitleClass(p); p list
+proc QtildeClass(list p)
+"USAGE:     QtildeClass(p); p list
 INPUT:      a list of integers which is a partition
 RETURN:     poly
-PURPOSE:    compute the Q title classes on a Grassmannian.
-EXAMPLE:    example QtitleClass; shows an example
+PURPOSE:    compute the Q tilde classes on a Grassmannian.
+EXAMPLE:    example QtildeClass; shows an example
 "
 {
     def R = basering;
@@ -2129,7 +2129,7 @@ EXAMPLE:    example QtitleClass; shows an example
                 list p1 = delete(p,i);
                 list p2 = delete(p1,size(p)-1);
                 list p3 = p[i],p[size(p)];
-                Q = Q + (-1)^(i-1)*QtitleClass(p3)*QtitleClass(p2);
+                Q = Q + (-1)^(i-1)*QtildeClass(p3)*QtildeClass(p2);
                 kill p1,p2,p3;
             }
         }
@@ -2139,7 +2139,7 @@ EXAMPLE:    example QtitleClass; shows an example
             for (j = 1; j <= size(p); j++)
             {
                 list p4 = delete(p,j);
-                Q = Q + (-1)^(j-1)*var(p[j])*QtitleClass(p4);
+                Q = Q + (-1)^(j-1)*var(p[j])*QtildeClass(p4);
                 kill p4;
             }
         }
@@ -2153,7 +2153,7 @@ example
     def r = G.baseRing;
     setring r;
     list p = 4,2,1;
-    QtitleClass(p);
+    QtildeClass(p);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
