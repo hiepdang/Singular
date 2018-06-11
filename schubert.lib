@@ -98,6 +98,7 @@ PROCEDURES:
                                         characters
     SchubertClass(list)                 compute the Schubert classes on a
                                         Grassmannian
+    QtildeClass(list)                   compute the Q-tilde classes on a Grassmannian
     dualPartition(list)                 compute the dual of a partition
 
 KEYWORDS:       Intersection theory; Enumerative geometry; Schubert calculus;
@@ -2620,50 +2621,4 @@ example
     D;
     D.ChernCharacter == rankSheaf(D);
     totalChernClass(D) == 1;
-}
-
-proc LRcoeffLG(list lambda, list mu, list gamma)
-{
-    def oldring = basering;
-    int n = max(lambda[1],mu[1],gamma[1]);
-    variety G = Grassmannian(n,2*n);
-    def r = G.baseRing; setring r;
-    poly Qlambda = QtildeClass(lambda);
-    poly Qmu = QtildeClass(mu);
-    poly Qgamma = QtildeClass(dualList(gamma,n));
-    list delta;
-    for (int i = 1; i <= n-1; i++)
-    {
-        delta = delta + list(n-i);
-    }
-    poly Sdelta = SchubertClass(delta);
-    def f = integral(G,Qlambda*Qmu*Qgamma*Sdelta);
-    setring oldring;
-    return (imap(r,f));
-}
-
-proc dualList(list gamma, int n)
-{
-    list m;
-    for (int i = 1; i <= n; i++)
-    {
-        int c;
-        for (int j = 1; j <= size(gamma); j++)
-        {
-            if (gamma[j] == n+1-i) {c = c + 1;}
-        }
-        if (c == 0) {m = m + list(n+1-i);}
-        kill c,j;
-    }
-    return (m);
-}
-
-proc sumList(list p)
-{
-    int r;
-    for (int i = 1; i <= size(p); i++)
-    {
-        r = r + p[i];
-    }
-    return (r);
 }
