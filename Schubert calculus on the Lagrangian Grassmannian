@@ -39,7 +39,7 @@ proc deg1GWLG(list lambda, list mu, list gamma)
     return (imap(r,f));
 }
 
-proc dualList(list gamma, int n)
+static proc dualList(list gamma, int n)
 {
     list m;
     for (int i = 1; i <= n; i++)
@@ -55,7 +55,7 @@ proc dualList(list gamma, int n)
     return (m);
 }
 
-proc sumList(list p)
+static proc sumList(list p)
 {
     int r;
     for (int i = 1; i <= size(p); i++)
