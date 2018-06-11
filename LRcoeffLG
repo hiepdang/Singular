@@ -18,6 +18,27 @@ proc LRcoeffLG(list lambda, list mu, list gamma)
     return (imap(r,f));
 }
 
+proc deg1GWLG(list lambda, list mu, list gamma)
+{
+    def oldring = basering;
+    int n = max(lambda[1],mu[1],gamma[1]);
+    if (sumList(lambda) + sumList(mu) + sumList(gamma) <> (n+1)(n+2)/2) {return (0);}
+    variety G = Grassmannian(n+1,2*(n+1));
+    def r = G.baseRing; setring r;
+    poly Qlambda = QtildeClass(lambda);
+    poly Qmu = QtildeClass(mu);
+    poly Qgamma = QtildeClass(gamma);
+    list delta;
+    for (int i = 1; i <= n; i++)
+    {
+        delta = delta + list(n+1-i);
+    }
+    poly Sdelta = SchubertClass(delta);
+    def f = integral(G,Qlambda*Qmu*Qgamma*Sdelta)/2;
+    setring oldring;
+    return (imap(r,f));
+}
+
 proc dualList(list gamma, int n)
 {
     list m;
